@@ -26,58 +26,15 @@ app.get('/style.css', function (req, res) {
 var cards = [];
 
 function fillCardArray() {
-    for (var i = 2; i < 15; i++) {
-        var c = '' + i;
-        if (i > 10) {
-            switch (i) {
-                case 11:
-                    c = 'J';
-                    break;
-                case 12:
-                    c = 'Q';
-                    break;
-                case 13:
-                    c = 'K';
-                    break;
-                case 14:
-                    c = 'A';
-                    break;
-            }
-        }
-
-        for (var i2 = 0; i2 < 4; i2++) {
-            var type = '';
-            switch (i2) {
-                case 0:
-                    type = 'H';
-                    break;
-                case 1:
-                    type = 'D';
-                    break;
-                case 2:
-                    type = 'C';
-                    break;
-                case 3:
-                    type = 'S';
-                    break;
-            }
-            var card = [c + type];
-            card["type"] = type;
-            card["c"] = c;
-            cards[cards.length] = card;
+    var cs = ['0','1','2','3','4','5','6','7','8','9','10','J','Q','K','A']; //boer(J), vrouw(Q), heer(K), aas(A)
+    var ts = ['H','D','C','S']; //Kaarttypes harten(H), ruiten(D), schoppen(C), klaver(s)
+    for (var i=0; i < cs.length; i++) {
+        for (var i2=0; i2<ts.length; i2++) {
+            cards[cards.length] = {'card': cs[i], 'type': ts[i2]};
         }
     }
-    var card = ['Joker1'];
-    card["type"] = 'Joker';
-    card["c"] = '1';
-    cards[cards.length] = card;
-
-    var card = ['Joker2'];
-    card["type"] = 'Joker';
-    card["c"] = '2';
-    cards[cards.length] = card;
-
-    // console.log(cards);
+    cards[cards.length] = {'card': 'Joker', 'type': '1'};
+    cards[cards.length] = {'card': 'Joker', 'type': '2'};
 }
 
 function shuffle() {
