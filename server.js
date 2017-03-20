@@ -33,17 +33,8 @@ function fillCardArray() {
             cards[cards.length] = {'card': cs[i], 'type': ts[i2]};
         }
     }
-    var card = ['Joker1'];
-    card["type"] = 'Joker';
-    card["c"] = '1';
-    cards[cards.length] = card;
-
-    var card = ['Joker2'];
-    card["type"] = 'Joker';
-    card["c"] = '2';
-    cards[cards.length] = card;
-
-    // console.log(cards);
+    cards[cards.length] = {'card': 'Joker', 'type': '1'};
+    cards[cards.length] = {'card': 'Joker', 'type': '2'};
 }
 
 function shuffle() {
