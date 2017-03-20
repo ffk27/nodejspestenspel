@@ -8,6 +8,10 @@ app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname+'/index.html'));
 });
 
+app.get('/style.css', function (req, res) {
+    res.sendFile(path.join(__dirname+'/style.css'));
+});
+
 app.listen(port, function () {
     console.log('Pesten app luistert op port ' + port);
 });
@@ -48,7 +52,9 @@ function fillCardArray() {
                     type = 'S';
                     break;
             }
-            var card = c + type;
+            var card = [c + type];
+            card["type"] = type;
+            card["c"] = c;
             cards[cards.length] = card;
         }
     }
