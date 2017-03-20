@@ -2,19 +2,28 @@ var express = require('express');
 var app = express();
 var path    = require("path");
 var port = 8000;
-var cards = [];
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+
+server.listen(port);
 
 app.get('/', function (req, res) {
-    res.sendFile(path.join(__dirname+'/index.html'));
+    res.sendFile(__dirname + '/index.html');
+});
+
+io.on('connection', function (socket) {
+    socket.emit('news', { hello: 'world' });
+    socket.on('my other event', function (data) {
+        console.log(data);
+    });
 });
 
 app.get('/style.css', function (req, res) {
     res.sendFile(path.join(__dirname+'/style.css'));
 });
 
-app.listen(port, function () {
-    console.log('Pesten app luistert op port ' + port);
-});
+
+var cards = [];
 
 function fillCardArray() {
     for (var i = 2; i < 15; i++) {
@@ -65,8 +74,18 @@ function fillCardArray() {
     console.log(cards);
 }
 
-function scramble(){
+function shuffle() {
+    var currentIndex = cards.length, temporaryValue, randomIndex;
 
+    while (0 != currentIndex) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+        temporaryValue = cards[currentIndex];
+        cards[currentIndex] = cards[randomIndex];
+        cards[randomIndex] = temporaryValue;
+    }
+    console.log(cards);
 }
 
 fillCardArray();
+shuffle();
