@@ -1,5 +1,5 @@
 body {
-    background-color: #e9ebee;
+    background-color: #008300;
     font-family:"Verdana", sans-serif;
     font-size:14px;
 }
@@ -18,16 +18,15 @@ h2 {
 }
 
 header {
-    height:100px;
-    background-color:#47A;
+    height:200px;
+    //background-color:#58B;
 }
 
 #content {
-    background-color:#69C;
+    //background-color:#47A;
 }
 
 footer {
-    height:30px;
-    background-color:#47A;
-    text-align:center;
+    height:50px;
+    //background-color:#58B;
 }
