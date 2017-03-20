@@ -4,6 +4,7 @@
   "description": "Opdracht voor hogeschool Windesheim",
   "main": "server.js",
   "dependencies": {
+    "express": "^4.15.2",
     "npm": "^1.4.9",
     "socket.io": "^1.7.3"
   },
