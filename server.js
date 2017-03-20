@@ -67,11 +67,17 @@ function fillCardArray() {
             cards[cards.length] = card;
         }
     }
+    var card = ['Joker1'];
+    card["type"] = 'Joker';
+    card["c"] = '1';
+    cards[cards.length] = card;
 
-    cards[cards.length] = 'Joker1';
-    cards[cards.length] = 'Joker2';
+    var card = ['Joker2'];
+    card["type"] = 'Joker';
+    card["c"] = '2';
+    cards[cards.length] = card;
 
-    console.log(cards);
+    // console.log(cards);
 }
 
 function shuffle() {

@@ -18,15 +18,16 @@ h2 {
 }
 
 header {
-    height:200px;
-    background-color:#58B;
-}
-
-#content {
+    height:100px;
     background-color:#47A;
 }
 
+#content {
+    background-color:#69C;
+}
+
 footer {
-    height:50px;
-    background-color:#58B;
+    height:30px;
+    background-color:#47A;
+    text-align:center;
 }
