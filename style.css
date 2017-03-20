@@ -1,0 +1,32 @@
+body {
+    background-color: #e9ebee;
+    font-family:"Verdana", sans-serif;
+    font-size:14px;
+}
+
+h1 {
+    font-size:22px;
+}
+
+h2 {
+    font-size:18px;
+}
+
+#wrapper {
+    margin: 0 auto;
+    max-width:1024px;
+}
+
+header {
+    height:200px;
+    background-color:#58B;
+}
+
+#content {
+    background-color:#47A;
+}
+
+footer {
+    height:50px;
+    background-color:#58B;
+}
