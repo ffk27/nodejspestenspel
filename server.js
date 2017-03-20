@@ -1,23 +1,11 @@
-var http = require('http');
+var express = require('express');
+var app = express();
+var path    = require("path");
 
+app.get('/', function (req, res) {
+    res.sendFile(path.join(__dirname+'/index.html'));
+});
 
-
-http.createServer(function (req, res) {
-
-
-
-    res.writeHead(200, { 'Content-Type': 'text/html' });
-
-    fs = require('fs');
-    var p  = './index.html';
-    fs.readFile(p, function(err, html) {
-        if(err){
-            throw err;
-        }
-        res.writeHead(200 , { "Content-Type": "text/html"});
-        res.write(html);
-        res.end();
-        console.log("response sent..");
-    });
-
-}).listen(process.env.PORT || 8080);
+app.listen(8000, function () {
+    console.log('Example app listening on port 8000!')
+});
