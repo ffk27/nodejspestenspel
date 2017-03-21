@@ -27,6 +27,14 @@ header {
     width:100%;
 }
 
+#controls {
+    margin:10px;
+}
+
+#controls button {
+    padding:5px 10px;
+}
+
 .card{
     width: 8%;
     height: auto;

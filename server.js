@@ -9,8 +9,17 @@ var cards = [];
 
 server.listen(port);
 
+//get page from index.html
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
+});
+//make css reachable
+app.get('/style.css', function (req, res) {
+    res.sendFile(path.join(__dirname+'/style.css'));
+});
+//make js reachable
+app.get('/script.js', function (req, res) {
+    res.sendFile(path.join(__dirname+'/script.js'));
 });
 
 io.on('connection', function (socket) {
@@ -20,12 +29,7 @@ io.on('connection', function (socket) {
     });
 });
 
-app.get('/style.css', function (req, res) {
-    res.sendFile(path.join(__dirname+'/style.css'));
-});
-
 app.use('/img', express.static('img'))
-
 
 
 function fillCardArray() {
@@ -50,7 +54,7 @@ function shuffle() {
         cards[currentIndex] = cards[randomIndex];
         cards[randomIndex] = temporaryValue;
     }
-    console.log(cards);
+    // console.log(cards);
 }
 
 fillCardArray();
