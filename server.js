@@ -34,7 +34,10 @@ io.on('connection', function (socket) {
         console.log(data);
         socket.emit('magopleggen', data);
     });
+    socket.on('player', function (data) {
 
+        socket.emit('connect', socket);
+    });
 });
 
 
