@@ -6,6 +6,9 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
 var cards = [];
+var trekstapel = [];
+var aflegstapel = [];
+var playercards = [];
 
 server.listen(port);
 

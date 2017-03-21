@@ -2,10 +2,44 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link s rel="stylesheet" type="text/css" href="style.css" />
+    <title>Pesten Online</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
-    <title>Pesten Online</title>
+    <style>
+        .stapel {
+            display: inline-block;
+            width: 102px;
+            height: 149px;
+            border: 2px solid black;
+        }
+    </style>
+    <script>
+        var socket = io.connect('http://localhost:8000');
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("card", ev.target.id);
+        }
+
+        function drop(ev) {
+            socket.emit('legop');
+        }
+
+        socket.on('magopleggen', function(data) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("card");
+            if (ev.target.firstChild) {
+                ev.target.replaceChild(document.getElementById(data),ev.target.firstChild);
+            }
+            else {
+                ev.target.appendChild(document.getElementById(data));
+            }
+        });
+    </script>
 </head>
 <body>
 <section id="wrapper">
@@ -13,13 +47,17 @@
         <h1>Pesten Online</h1>
     </header>
 
-    <section id="content"></section>
+    <section id="content">
+        <section class="stapel" id="trekstapel"></section>
+        <section class="stapel" id="aflegstapel" ondrop="drop(event)" ondragover="allowDrop(event)"></section>
+        <section id="playercards"></section>
+    </section>
+
     <script>
-        var socket = io.connect('http://localhost:8000');
         socket.on('cards', function (data) {
             console.log(data);
             for(var i = 0; i < data.length; i++){
-                $("#content").append('<img class="card" src="img/cards-svg/'+data[i].card+data[i].type+'.svg"/>');
+                $("#playercards").append('<img class="card" id="'+data[i].card+data[i].type+'" draggable="true" ondragstart="drag(event)" src="img/cards-svg/'+data[i].card+data[i].type+'.svg"/>');
             }
             //socket.emit('my other event', { my: 'data' });
         });
