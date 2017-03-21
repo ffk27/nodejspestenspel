@@ -34,8 +34,9 @@ function setMessage(message, color){
 
 function isValid(input){
     var pattern = /[^\w+]/g;
-    console.log(input.search(pattern));
-    if(input.match(pattern).length == 0){
+    console.log(input);
+    console.log(input.match(pattern));
+    if(input.match(pattern) == null){
         return true;
     }
     return false;
@@ -51,6 +52,7 @@ $(document).ready(function(){
             setMessage("Uw naam mag geen speciale tekens bevatten", "#d11010");
         }
         else{
+            var socket = io.connect('http://localhost:8000');
             var player = {name: $("name").val, cards: []}
             socket.emit('player', name);
         }
