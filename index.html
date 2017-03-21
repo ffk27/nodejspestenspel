@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link s rel="stylesheet" type="text/css" href="style.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
     <title>Pesten Online</title>
 </head>
@@ -15,9 +16,12 @@
     <section id="content"></section>
     <script>
         var socket = io.connect('http://localhost:8000');
-        socket.on('news', function (data) {
+        socket.on('cards', function (data) {
             console.log(data);
-            socket.emit('my other event', { my: 'data' });
+            for(var i = 0; i < data.length; i++){
+                $("#content").append('<img class="card" src="img/cards-svg/'+data[i].card+data[i].type+'.svg"/>');
+            }
+            //socket.emit('my other event', { my: 'data' });
         });
     </script>
 

@@ -22,7 +22,10 @@ header {
     height:200px;
 }
 
-
+.card{
+    width: 10%;
+    height: auto;
+}
 
 footer {
     height:50px;
