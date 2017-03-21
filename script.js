@@ -52,6 +52,9 @@ $(document).ready(function(){
         else{
             var socket = io.connect('http://localhost:8000');
             socket.emit('player', name);
+            socket.on('connect', function(data){
+                setMessage("U mag verbinden", "green");
+            });
         }
     });
 });

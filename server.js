@@ -35,8 +35,9 @@ io.on('connection', function (socket) {
         socket.emit('magopleggen', data);
     });
     socket.on('player', function (data) {
-
-        socket.emit('connect', socket);
+        var pattern = /[^\w+]/g;
+        if(data.match(pattern) == null && data != "")
+            socket.emit('connect', socket);
     });
 });
 
