@@ -12,3 +12,15 @@ function loadDeck() {
         //socket.emit('my other event', { my: 'data' });
     });
 }
+
+function setMessage(message, color){
+    $("#message").hide().fadeIn().html(message).css("color", color).delay(2000).fadeOut();
+}
+
+$(document).ready(function(){
+    $("#enter").click(function () {
+        if($("#name").val() == ""){
+            setMessage("U heeft geen naam ingevuld", "#d11010");
+        }
+    });
+});

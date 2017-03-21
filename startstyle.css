@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+body {
+    background-color: #008300;
+    font-family: 'Roboto', sans-serif;
+    font-size:30px;
+}
+
+h1{
+    text-align: center;
+}
+
+#asideleft img{
+    float: left;
+}
+
+#startbox{
+    width: 50%;
+    height: 500px;
+    margin-left: 25%;
+    margin-top: 5%;
+    border: solid 5px;
+    border-radius: 55px;
+    background: #c67b0b;
+    float: left;
+}
+
+#signin{
+    text-align: center;
+}
+
+#message{
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#name{
+    width: 30%;
+    height: 20px;
+    text-align: center;
+    border-radius: 20px;
+    border-color: black;
+    background: #f5fff4;
+    transition: all 0.25s ease;
+    outline: none;
+}
+
+#name:hover{
+    background: #ffc67c;
+}
+
+#enter{
+    width: 125px;
+    height: 35px;
+    margin-top: 15px;
+    background: #bf0f0f;
+    border-color: red;
+    border-radius: 70px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-shadow: 0;
+    color: whitesmoke;
+    font-weight: bold;
+    transition: all 0.25s ease;
+    font-size: 14px;
+    outline: none;
+}
+
+#enter:hover{
+    background: #ff1e1e;
+    color: white;
+}

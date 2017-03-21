@@ -29,6 +29,14 @@ io.on('connection', function (socket) {
     });
 });
 
+app.get('/startstyle.css', function (req, res) {
+    res.sendFile(path.join(__dirname+'/startstyle.css'));
+});
+
+app.get('/start.html', function (req, res) {
+    res.sendFile(path.join(__dirname+'/start.html'));
+});
+
 app.use('/img', express.static('img'))
 
 
@@ -54,7 +62,7 @@ function shuffle() {
         cards[currentIndex] = cards[randomIndex];
         cards[randomIndex] = temporaryValue;
     }
-    // console.log(cards);
+    console.log(cards);
 }
 
 fillCardArray();
