@@ -1,13 +1,14 @@
 
 
 function startGame() {
-    //Shuffle deck
-
+    loadDeck();
     //give cards
 
-    //delete start button
 
+    //delete start button
+    document.getElementById('controls').innerHTML = "";
 }
+
 
 function loadDeck() {
     var socket = io.connect('http://localhost:8000');

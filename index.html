@@ -28,19 +28,20 @@
         }
 
         function drop(ev) {
-            socket.emit('legop');
-        }
-
-        socket.on('magopleggen', function(data) {
             ev.preventDefault();
             var data = ev.dataTransfer.getData("card");
-            if (ev.target.firstChild) {
-                ev.target.replaceChild(document.getElementById(data),ev.target.firstChild);
-            }
-            else {
-                ev.target.appendChild(document.getElementById(data));
-            }
-        });
+            socket.emit('legop', data);
+            socket.on('magopleggen', function(data) {
+                if (ev.target.firstChild) {
+                    ev.target.replaceChild(document.getElementById(data),ev.target.firstChild);
+                }
+                else {
+                    ev.target.appendChild(document.getElementById(data));
+                }
+            });
+        }
+
+
     </script>
 </head>
 <body>
@@ -52,7 +53,7 @@
     <section id="content">
 
         <section id="controls">
-            <button onclick="loadDeck()">Spel starten</button>
+            <button onclick="startGame()">Spel starten</button>
         </section>
 
         <section class="stapel" id="trekstapel"></section>
