@@ -6,8 +6,8 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
 var cards = [];
-var trekstapel = [];
-var aflegstapel = [];
+var deck = [];
+var stash = [];
 var playercards = [];
 
 server.listen(port);
@@ -32,14 +32,17 @@ io.on('connection', function (socket) {
     });
 });
 
+//make start css reachable
 app.get('/startstyle.css', function (req, res) {
     res.sendFile(path.join(__dirname+'/startstyle.css'));
 });
 
+//make start.html reachable
 app.get('/start.html', function (req, res) {
     res.sendFile(path.join(__dirname+'/start.html'));
 });
 
+//make img directory reachable
 app.use('/img', express.static('img'))
 
 

@@ -31,10 +31,22 @@ function setMessage(message, color){
     $("#message").hide().fadeIn().html(message).css("color", color).delay(2000).fadeOut();
 }
 
+function isValid(input){
+    var pattern = /[^\w+]/g;
+    console.log(input.search(pattern));
+    if(input.match(pattern).length == 0){
+        return true;
+    }
+    return false;
+}
+
 $(document).ready(function(){
     $("#enter").click(function () {
-        if($("#name").val() == ""){
-            setMessage("U heeft geen naam ingevuld", "#d11010");
+        if($("#name").val().length < 3){
+            setMessage("De naam moet minimaal 2 karakters lang zijn", "#d11010");
+        }
+        else if(!isValid($("#name").val())){
+            setMessage("Uw naam mag geen speciale tekens bevatten", "#d11010");
         }
     });
 });
