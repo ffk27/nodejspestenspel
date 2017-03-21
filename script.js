@@ -34,8 +34,6 @@ function setMessage(message, color){
 
 function isValid(input){
     var pattern = /[^\w+]/g;
-    console.log(input);
-    console.log(input.match(pattern));
     if(input.match(pattern) == null){
         return true;
     }
