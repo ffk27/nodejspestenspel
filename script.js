@@ -43,11 +43,16 @@ function isValid(input){
 
 $(document).ready(function(){
     $("#enter").click(function () {
-        if($("#name").val().length < 3){
+        var name = $("#name").val();
+        if(name.length < 3){
             setMessage("De naam moet minimaal 2 karakters lang zijn", "#d11010");
         }
-        else if(!isValid($("#name").val())){
+        else if(!isValid(name)){
             setMessage("Uw naam mag geen speciale tekens bevatten", "#d11010");
+        }
+        else{
+            var player = {name: $("name").val, cards: []}
+            socket.emit('player', name);
         }
     });
 });
