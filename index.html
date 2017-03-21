@@ -2,10 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Pesten Online</title>
     <link rel="stylesheet" type="text/css" href="style.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+    <script src="script.js"></script>
+
+    <title>Pesten Online</title>
     <style>
         .stapel {
             display: inline-block;
@@ -47,6 +49,16 @@
         <h1>Pesten Online</h1>
     </header>
 
+    <section id="content">
+
+        <section id="controls">
+            <button>Spel starten</button>
+        </section>
+
+        <script>
+        loadDeck();
+        </script>
+    </section>
     <section id="content">
         <section class="stapel" id="trekstapel"></section>
         <section class="stapel" id="aflegstapel" ondrop="drop(event)" ondragover="allowDrop(event)"></section>
