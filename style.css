@@ -19,14 +19,22 @@ h2 {
 }
 
 header {
-    height:200px;
+    height:120px;
+}
+
+#content {
+    position: relative;
+    width:100%;
 }
 
 .card{
-    width: 10%;
+    width: 8%;
     height: auto;
+    position: absolute;
 }
 
 footer {
+    position: fixed;
     height:50px;
+    bottom:0;
 }
