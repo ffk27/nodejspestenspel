@@ -53,7 +53,6 @@ $(document).ready(function(){
         }
         else{
             var socket = io.connect('http://localhost:8000');
-            var player = {name: $("name").val, cards: []}
             socket.emit('player', name);
         }
     });
