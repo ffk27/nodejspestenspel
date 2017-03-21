@@ -52,28 +52,13 @@
     <section id="content">
 
         <section id="controls">
-            <button>Spel starten</button>
+            <button onclick="loadDeck()">Spel starten</button>
         </section>
 
-        <script>
-        loadDeck();
-        </script>
-    </section>
-    <section id="content">
         <section class="stapel" id="trekstapel"></section>
         <section class="stapel" id="aflegstapel" ondrop="drop(event)" ondragover="allowDrop(event)"></section>
         <section id="playercards"></section>
     </section>
-
-    <script>
-        socket.on('cards', function (data) {
-            console.log(data);
-            for(var i = 0; i < data.length; i++){
-                $("#playercards").append('<img class="card" id="'+data[i].card+data[i].type+'" draggable="true" ondragstart="drag(event)" src="img/cards-svg/'+data[i].card+data[i].type+'.svg"/>');
-            }
-            //socket.emit('my other event', { my: 'data' });
-        });
-    </script>
 
     <footer>
         &copy; Floris, Boris & Brian, 2004 - 2017
