@@ -35,8 +35,8 @@ io.on('connection', function (socket) {
         var pattern = /[^\w+]/g;
         if(data.match(pattern) == null && data != "") {
             var randomlyGeneratedUID = Math.random().toString(36).substring(3,16) + +new Date;
+            playercards[playercards.length]={'name': data, 'uid': randomlyGeneratedUID, 'socket': socket};
             socket.emit('connect', randomlyGeneratedUID);
-            playercards[playercards.length]={name: data, uid: randomlyGeneratedUID, socket: socket};
         }
     });
     socket.on('reconnect', function(data){
