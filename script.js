@@ -1,6 +1,13 @@
 var socket = io.connect('http://localhost:8000');
+var uid = localStorage.getItem("uid");
+if (uid !== null && uid != 'undefined') {
+    socket.emit('reconnect', uid);
+    console.log('reconnect',typeof uid);
+}
 
-socket.emit('reconnect', localStorage.getItem("uid"));
+socket.on('isReconnected', function (name) {
+    console.log(name);
+});
 
 function startGame() {
     loadDeck();
@@ -50,9 +57,9 @@ $(document).ready(function(){
             setMessage("Uw naam mag geen speciale tekens bevatten", "#d11010");
         }
         else{
-            var socket = io.connect('http://localhost:8000');
             socket.emit('player', name);
             socket.on('connect', function(data){
+                console.log(data);
                 localStorage.setItem("uid" ,data);
                 window.location.href = "/";
             });

@@ -43,6 +43,7 @@ io.on('connection', function (socket) {
         for(var i = 0; i < playercards.length; i++){
             if(playercards[i].uid == data){
                 playercards[i].socket = socket;
+                socket.emit('isReconnected',playercards[i].name);
                 break;
             }
         }
