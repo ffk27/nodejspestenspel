@@ -27,20 +27,27 @@ app.get('/script.js', function (req, res) {
 
 io.on('connection', function (socket) {
     socket.emit('cards', cards);
-    socket.on('my other event', function (data) {
-        console.log(data);
-    });
     socket.on('legop', function (data) {
         console.log(data);
         socket.emit('magopleggen', data);
     });
     socket.on('player', function (data) {
         var pattern = /[^\w+]/g;
-        if(data.match(pattern) == null && data != "")
-            socket.emit('connect', socket);
+        if(data.match(pattern) == null && data != "") {
+            var randomlyGeneratedUID = Math.random().toString(36).substring(3,16) + +new Date;
+            socket.emit('connect', randomlyGeneratedUID);
+            playercards[playercards.length]={name: data, uid: randomlyGeneratedUID, socket: socket};
+        }
+    });
+    socket.on('reconnect', function(data){
+        for(var i = 0; i < playercards.length; i++){
+            if(playercards[i].uid == data){
+                playercards[i].socket = socket;
+                break;
+            }
+        }
     });
 });
-
 
 //make start css reachable
 app.get('/startstyle.css', function (req, res) {

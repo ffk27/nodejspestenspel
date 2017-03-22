@@ -1,4 +1,6 @@
+var socket = io.connect('http://localhost:8000');
 
+socket.emit('reconnect', localStorage.getItem("uid"));
 
 function startGame() {
     loadDeck();
@@ -11,8 +13,6 @@ function startGame() {
 
 
 function loadDeck() {
-    var socket = io.connect('http://localhost:8000');
-
     socket.on('cards', function (data) {
         console.log(data);
         for(var i = 0; i < data.length; i++){
@@ -44,7 +44,7 @@ $(document).ready(function(){
     $("#enter").click(function () {
         var name = $("#name").val();
         if(name.length < 3){
-            setMessage("De naam moet minimaal 2 karakters lang zijn", "#d11010");
+            setMessage("Uw naam moet minimaal 2 karakters lang zijn", "#d11010");
         }
         else if(!isValid(name)){
             setMessage("Uw naam mag geen speciale tekens bevatten", "#d11010");
@@ -53,7 +53,8 @@ $(document).ready(function(){
             var socket = io.connect('http://localhost:8000');
             socket.emit('player', name);
             socket.on('connect', function(data){
-                setMessage("U mag verbinden", "green");
+                localStorage.setItem("uid" ,data);
+                window.location.href = "/";
             });
         }
     });
