@@ -3,7 +3,7 @@ var socket;
 $(document).ready(function () {
     socket = io.connect('http://localhost:8000');
 
-    var uid = localStorage.getItem("uid");
+    var uid = sessionStorage.getItem("uid");
     if (uid !== null && uid != 'undefined') {
         socket.emit('reconnect', uid);
         socket.on('isReconnected', function (name) {
