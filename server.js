@@ -13,27 +13,15 @@ var playercards = [];
 
 server.listen(port);
 
-//get page from index.html
-app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/index.html');
-});
-//make css reachable
-app.get('/style.css', function (req, res) {
-    res.sendFile(path.join(__dirname+'/style.css'));
-});
-//make js reachable
-app.get('/script.js', function (req, res) {
-    res.sendFile(path.join(__dirname+'/script.js'));
-});
-//make start css reachable
-app.get('/startstyle.css', function (req, res) {
-    res.sendFile(path.join(__dirname+'/startstyle.css'));
-});
-//make start.html reachable
-app.get('/start.html', function (req, res) {
-    res.sendFile(path.join(__dirname+'/start.html'));
-});
-//make img directory reachable
+//Load HTML pages
+app.get('/', function(req,res){res.sendFile(__dirname + '/start.html');});
+app.get('/game', function(req,res){res.sendFile(path.join(__dirname+'/index.html'));});
+//Load CSS files
+app.get('/style.css', function(req,res){res.sendFile(path.join(__dirname+'/style.css'));});
+app.get('/startstyle.css', function(req,res){res.sendFile(path.join(__dirname+'/startstyle.css'));});
+//Load JS files
+app.get('/script.js', function(req,res){res.sendFile(path.join(__dirname+'/script.js'));});
+//Load Images
 app.use('/img', express.static('img'));
 
 
