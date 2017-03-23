@@ -1,6 +1,7 @@
 var express = require('express');
 var app = express();
-var path    = require("path");
+var path = require("path");
+var starter = require('./startGame.js');
 var port = 8000;
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
@@ -27,6 +28,7 @@ app.get('/script.js', function (req, res) {
 
 io.on('connection', function (socket) {
     socket.emit('cards', cards);
+
     socket.on('player', function (data) {
         var pattern = /[^\w+]/g;
         if(data.match(pattern) == null && data != "") {
@@ -39,6 +41,7 @@ io.on('connection', function (socket) {
             });
         }
     });
+
     socket.on('reconnect', function(data){
         for(var i = 0; i < playercards.length; i++){
             if(playercards[i].uid == data){
@@ -47,6 +50,13 @@ io.on('connection', function (socket) {
                 break;
             }
         }
+    });
+
+    socket.on('GameStarted', function() {
+        console.log('GameStarted in server.js');
+
+        starter.start();
+
     });
 });
 
@@ -63,7 +73,6 @@ app.get('/start.html', function (req, res) {
 //make img directory reachable
 app.use('/img', express.static('img'))
 
-test("hoi");
 
 function fillCardArray() {
     var cs = ['2','3','4','5','6','7','8','9','10','J','Q','K','A']; //boer(J), vrouw(Q), heer(K), aas(A)
@@ -87,8 +96,8 @@ function shuffle(cards) {
         cards[currentIndex] = cards[randomIndex];
         cards[randomIndex] = temporaryValue;
     }
-    console.log(cards);
     return cards;
+    // console.log(cards);
 }
 
 fillCardArray();

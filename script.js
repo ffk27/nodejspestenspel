@@ -13,8 +13,10 @@ $(document).ready(function () {
 });
 
 function startGame() {
-    loadDeck();
-    //give cards
+    loadDeck();//being deleted later on
+
+    socket = io.connect('http://localhost:8000');
+    socket.emit('GameStarted');
 
     //delete start button
     document.getElementById('controls').innerHTML = "";
@@ -22,6 +24,8 @@ function startGame() {
 
 
 function loadDeck() {
+    var socket = io.connect('http://localhost:8000');
+
     socket.on('cards', function (data) {
         console.log(data);
         for(var i = 0; i < data.length; i++){
