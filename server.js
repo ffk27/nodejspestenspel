@@ -63,6 +63,7 @@ app.get('/start.html', function (req, res) {
 //make img directory reachable
 app.use('/img', express.static('img'))
 
+test("hoi");
 
 function fillCardArray() {
     var cs = ['2','3','4','5','6','7','8','9','10','J','Q','K','A']; //boer(J), vrouw(Q), heer(K), aas(A)
@@ -76,7 +77,7 @@ function fillCardArray() {
     cards[cards.length] = {'card': 'Joker', 'type': '2'};
 }
 
-function shuffle() {
+function shuffle(cards) {
     var currentIndex = cards.length, temporaryValue, randomIndex;
 
     while (0 != currentIndex) {
@@ -87,6 +88,7 @@ function shuffle() {
         cards[randomIndex] = temporaryValue;
     }
     console.log(cards);
+    return cards;
 }
 
 fillCardArray();
