@@ -1,13 +1,4 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto');
-body {
-    background-color: #008300;
-    font-family: 'Roboto', sans-serif;
-    font-size:30px;
-}
-
-h1{
-    text-align: center;
-}
 
 #asideleft img{
     float: left;

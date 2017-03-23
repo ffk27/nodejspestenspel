@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="startstyle.css" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" type="text/css" href="startscreen.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
     <script>
@@ -44,10 +45,14 @@
 <aside id="asideright">
 
 </aside>
-<section id="startbox">
-    <h1>Pesten Online</h1>
+<section id="wrapper">
+    <header>
+        <h1>Pesten Online</h1>
+    </header>
+</section>
+    <section id="startbox">
     <section id="signin">
-        Naam<br>
+        <h2>Naam</h2>
         <input type="text" id="name" maxlength="20" placeholder="Vul hier uw naam in"><br>
         <input type="button" id="enter" value="DEELNEMEN">
         <div id="message"></div>

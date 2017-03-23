@@ -18,7 +18,7 @@ app.get('/', function(req,res){res.sendFile(__dirname + '/start.html');});
 app.get('/game', function(req,res){res.sendFile(path.join(__dirname+'/index.html'));});
 //Load CSS files
 app.get('/style.css', function(req,res){res.sendFile(path.join(__dirname+'/style.css'));});
-app.get('/startstyle.css', function(req,res){res.sendFile(path.join(__dirname+'/startstyle.css'));});
+app.get('/startscreen.css', function(req,res){res.sendFile(path.join(__dirname+'/startscreen.css'));});
 //Load JS files
 app.get('/script.js', function(req,res){res.sendFile(path.join(__dirname+'/script.js'));});
 //Load Images

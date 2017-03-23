@@ -1,34 +1,35 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto');
 body {
-    background-color: #008300;
+    background-image:url('/img/bg.jpg');
+    background-size:100%;
     font-family: 'Roboto', sans-serif;
-    font-size:14px;
+    font-size:16px;
 }
 
 h1 {
-    font-size:22px;
+    font-size:60px;
+    text-align: center;
 }
 
 h2 {
-    font-size:18px;
+    font-size:24px;
 }
 
 #wrapper {
     margin: 0 auto;
+    width:100%;
     max-width:1024px;
+    /*background-color:pink;*/
 }
 
 header {
-    height:120px;
+    width:100%;
+    color:whitesmoke;
 }
 
 #content {
     position: relative;
     width:100%;
-}
-
-#controls {
-    margin:10px;
 }
 
 #controls button {

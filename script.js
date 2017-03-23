@@ -28,8 +28,7 @@ function startGame() {
     document.getElementById('controls').innerHTML = "";
 }
 
-
-function loadDeck() {
+function loadCards() {
     var socket = io.connect('http://localhost:8000');
 
     socket.on('cards', function (data) {
