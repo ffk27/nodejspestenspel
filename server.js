@@ -33,23 +33,26 @@ io.on('connection', function (socket) {
         var pattern = /[^\w+]/g;
         if(data.match(pattern) == null && data != "") {
             var randomlyGeneratedUID = Math.random().toString(36).substring(3,16) + +new Date;
-            playercards[playercards.length]={'name': data, 'uid': randomlyGeneratedUID, 'socket': socket};
-            socket.emit('playerconnect', randomlyGeneratedUID);
+            playercards[playercards.length]={'name': data, 'uid': randomlyGeneratedUID, 'socket': socket, 'cards': []};
+            socket.emit('canConnect', randomlyGeneratedUID);
+            /*
             socket.on('legop', function (data) {
                 console.log(data);
                 socket.emit('magopleggen', data);
             });
+            */
         }
     });
 
-    socket.on('reconnect', function(data){
+    socket.on('tryReconnect', function(data){
         for(var i = 0; i < playercards.length; i++){
             if(playercards[i].uid == data){
                 playercards[i].socket = socket;
-                socket.emit('isReconnected',playercards[i].name);
-                break;
+                socket.emit('canReconnect',playercards[i].name);
+                return;
             }
         }
+        socket.emit('entername');
     });
 
     socket.on('GameStarted', function() {
