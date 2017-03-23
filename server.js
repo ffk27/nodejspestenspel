@@ -1,7 +1,6 @@
 var express = require('express');
 var app = express();
 var path = require("path");
-var starter = require('./startGame.js');
 var port = 8000;
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
@@ -9,78 +8,91 @@ var io = require('socket.io')(server);
 var cards = [];
 var deck = [];
 var stash = [];
-var playercards = [];
+var players = [];
 
 server.listen(port);
 
-//Load HTML pages
+//Link HTML pages
 app.get('/', function(req,res){res.sendFile(__dirname + '/start.html');});
 app.get('/game', function(req,res){res.sendFile(path.join(__dirname+'/index.html'));});
-//Load CSS files
+//Link CSS files
 app.get('/style.css', function(req,res){res.sendFile(path.join(__dirname+'/style.css'));});
 app.get('/startscreen.css', function(req,res){res.sendFile(path.join(__dirname+'/startscreen.css'));});
-//Load JS files
+//Link JS files
 app.get('/script.js', function(req,res){res.sendFile(path.join(__dirname+'/script.js'));});
-//Load Images
+//Link Images
 app.use('/img', express.static('img'));
 
-
-
-
 io.on('connection', function (socket) {
-
     socket.on('player', function (data) {
         var pattern = /[^\w+]/g;
         if(data.match(pattern) == null && data != "") {
-            var randomlyGeneratedUID = Math.random().toString(36).substring(3,16) + +new Date;
-            playercards[playercards.length]={'name': data, 'uid': randomlyGeneratedUID, 'socket': socket, 'cards': []};
-            socket.emit('canConnect', randomlyGeneratedUID);
-            /*
-            socket.on('legop', function (data) {
-                console.log(data);
-                socket.emit('magopleggen', data);
-            });
-            */
+            var uid = Math.random().toString(22);
+            players[players.length]={'name': data, 'uid': uid, 'socket': socket, 'cards': []};
+            socket.emit('canConnect',uid);
         }
     });
 
     socket.on('tryReconnect', function(data){
-        for(var i = 0; i < playercards.length; i++){
-            if(playercards[i].uid == data){
-                playercards[i].socket = socket;
-                socket.emit('canReconnect',playercards[i].name);
+        for(var i = 0; i < players.length; i++){
+            if(players[i].uid == data){
+                players[i].socket = socket;
+                socket.emit('canReconnect',players[i].name);
+                //Als speler al in een spel was, laat kaarten weer zien.
+                if (cards.length>0) {
+                    update();
+                }
                 return;
             }
         }
         socket.emit('entername');
     });
 
-    socket.on('GameStarted', function() {
-        //check aantal spelers
+    socket.on('tryStart', function() {
+        //check aantal spelers en of het spel nog niet gestart is
         //...
+        if (players.length>1 && cards.length==0) {
+            //nieuw Deck aanmaken
+            fillCardArray();
 
-        //nieuw Deck aanmaken
-        fillCardArray();
+            //Kaarten schudden
+            cards = shuffle(cards);
 
-        //Kaarten schudden
-        cards = shuffle(cards);
+            //kaarten verdelen
+            distributeCards();
 
-        //kaarten verdelen
-        distributeCards();
-
-        socket.emit('stash', stash);
-        // socket.emit('ownCards', playercards[0]);
+            for (var i=0; i<players.length; i++) {
+                var player = players[i];
+                player.socket.emit('gameStart');
+                update();
+            }
+        }
     });
 });
+
+function update() {
+    //Stuur spelinfo naar alles spelers
+    for (var i=0; i<players.length; i++) {
+        var player = players[i];
+        var otherplayerinfo = [];
+        for (var i2=0; i2<players.length; i2++) {
+            if (players[i2]!=player) {
+                otherplayerinfo[otherplayerinfo.length] = {'name': players[i2].name, 'cardcount': players[i2].cards.count };
+            }
+        }
+        var game = {'playercards':player.cards, 'topstash': stash[stash.length-1], 'deckcount': deck.length, 'otherplayerinfo': otherplayerinfo};
+        player.socket.emit('update', game);
+    }
+}
 
 function distributeCards () {
     var cardsPos = 0;
     var handSize = 7;
 
     // kaarten verdelen onder spelers
-    for (var i = 0; i < playercards.length; i++) {
+    for (var i = 0; i < players.length; i++) {
         for (var c = cardsPos; c < (i+1)*handSize; c++) {
-            playercards[i]['cards'][playercards[i]['cards'].length] = cards[c];
+            players[i]['cards'][players[i]['cards'].length] = cards[c];
             console.log(cards[c]);
         }
         cardsPos += handSize;
@@ -94,7 +106,6 @@ function distributeCards () {
     //laatste kaart naar de opgooistapel
     stash[0] = cards[cards.length-1];
 }
-
 
 function fillCardArray() {
     var cs = ['2','3','4','5','6','7','8','9','10','J','Q','K','A']; //boer(J), vrouw(Q), heer(K), aas(A)

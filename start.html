@@ -11,7 +11,7 @@
             $("#message").hide().fadeIn().html(message).css("color", color).delay(2000).fadeOut();
         }
 
-        function isValid(input){
+        function isValidName(input){
             var pattern = /[^\w+]/g;
             if(input.match(pattern) == null){
                 return true;
@@ -19,21 +19,28 @@
             return false;
         }
 
-        $(document).ready(function(){
+        $(document).ready(function() {
+            var socket = io.connect('http://localhost:8000');
+            var uid = sessionStorage.getItem('uid');
+            if (uid!=null) {
+                socket.emit('tryReconnect',uid);
+                socket.on('canReconnect', function (player) {
+                   window.location.href = '/game';
+                });
+            }
             $("#enter").click(function () {
                 var name = $("#name").val();
                 if(name.length < 3){
                     setMessage("Uw naam moet minimaal 2 karakters lang zijn", "#d11010");
                 }
-                else if(!isValid(name)){
+                else if(!isValidName(name)){
                     setMessage("Uw naam mag geen speciale tekens bevatten", "#d11010");
                 }
                 else{
-                    var socket = io.connect('http://localhost:8000');
                     socket.emit('player', name);
                     socket.on('canConnect', function(data){
                         sessionStorage.setItem("uid" ,data);
-                        window.location.href = "/";
+                        window.location.href = "/game";
                     });
                 }
             });
