@@ -21,11 +21,8 @@ $(document).ready(function () {
 });
 
 function startGame() {
-
     socket = io.connect('http://localhost:8000');
     socket.emit('GameStarted');
-
-    // loadDeck();//being deleted later on
 
     //delete start button
     document.getElementById('controls').innerHTML = "";
