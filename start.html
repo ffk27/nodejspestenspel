@@ -30,7 +30,8 @@
                 else{
                     var socket = io.connect('http://localhost:8000');
                     socket.emit('player', name);
-                    socket.on('connect', function(data){
+                    socket.on('playerconnect', function(data){
+
                         sessionStorage.setItem("uid" ,data);
                         //window.location.href = "/";
                     });

@@ -32,7 +32,7 @@ io.on('connection', function (socket) {
         if(data.match(pattern) == null && data != "") {
             var randomlyGeneratedUID = Math.random().toString(36).substring(3,16) + +new Date;
             playercards[playercards.length]={'name': data, 'uid': randomlyGeneratedUID, 'socket': socket};
-            socket.emit('connect', randomlyGeneratedUID);
+            socket.emit('playerconnect', randomlyGeneratedUID);
             socket.on('legop', function (data) {
                 console.log(data);
                 socket.emit('magopleggen', data);
