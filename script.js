@@ -4,12 +4,20 @@ $(document).ready(function () {
     socket = io.connect('http://localhost:8000');
 
     var uid = sessionStorage.getItem("uid");
+
     if (uid !== null && uid != 'undefined') {
-        socket.emit('reconnect', uid);
-        socket.on('isReconnected', function (name) {
-            console.log(name);
+        socket.emit('tryReconnect', uid);
+        socket.on('canReconnect', function (player) {
+            console.log(player);
         });
     }
+    else {
+        window.location.href = 'start.html';
+    }
+
+    socket.on('entername', function () {
+        window.location.href = 'start.html';
+    });
 });
 
 function startGame() {
