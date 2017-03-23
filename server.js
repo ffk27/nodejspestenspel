@@ -25,9 +25,21 @@ app.get('/style.css', function (req, res) {
 app.get('/script.js', function (req, res) {
     res.sendFile(path.join(__dirname+'/script.js'));
 });
+//make start css reachable
+app.get('/startstyle.css', function (req, res) {
+    res.sendFile(path.join(__dirname+'/startstyle.css'));
+});
+//make start.html reachable
+app.get('/start.html', function (req, res) {
+    res.sendFile(path.join(__dirname+'/start.html'));
+});
+//make img directory reachable
+app.use('/img', express.static('img'));
+
+
+
 
 io.on('connection', function (socket) {
-    socket.emit('cards', cards);
 
     socket.on('player', function (data) {
         var pattern = /[^\w+]/g;
@@ -53,25 +65,44 @@ io.on('connection', function (socket) {
     });
 
     socket.on('GameStarted', function() {
-        console.log('GameStarted in server.js');
+        //check aantal spelers
+        //...
 
-        starter.start();
+        //nieuw Deck aanmaken
+        fillCardArray();
 
+        //Kaarten schudden
+        cards = shuffle(cards);
+
+        //kaarten verdelen
+        distributeCards();
+
+        socket.emit('stash', stash);
+        // socket.emit('ownCards', playercards[0]);
     });
 });
 
-//make start css reachable
-app.get('/startstyle.css', function (req, res) {
-    res.sendFile(path.join(__dirname+'/startstyle.css'));
-});
+function distributeCards () {
+    var cardsPos = 0;
+    var handSize = 7;
 
-//make start.html reachable
-app.get('/start.html', function (req, res) {
-    res.sendFile(path.join(__dirname+'/start.html'));
-});
+    // kaarten verdelen onder spelers
+    for (var i = 0; i < playercards.length; i++) {
+        for (var c = cardsPos; c < (i+1)*handSize; c++) {
+            playercards[i]['cards'][playercards[i]['cards'].length] = cards[c];
+            console.log(cards[c]);
+        }
+        cardsPos += handSize;
+    }
 
-//make img directory reachable
-app.use('/img', express.static('img'))
+    //overige kaarten naar afpakstapel
+    for (var i = cardsPos; i < cards.length-1; i++) {
+        deck[deck.length] = cards[i];
+    }
+
+    //laatste kaart naar de opgooistapel
+    stash[0] = cards[cards.length-1];
+}
 
 
 function fillCardArray() {
@@ -96,9 +127,6 @@ function shuffle(cards) {
         cards[currentIndex] = cards[randomIndex];
         cards[randomIndex] = temporaryValue;
     }
-    return cards;
-    // console.log(cards);
-}
 
-fillCardArray();
-shuffle(cards);
+    return cards;
+}
