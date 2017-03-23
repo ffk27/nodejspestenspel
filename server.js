@@ -101,4 +101,4 @@ function shuffle(cards) {
 }
 
 fillCardArray();
-shuffle();
+shuffle(cards);
