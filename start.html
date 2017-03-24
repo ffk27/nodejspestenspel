@@ -29,9 +29,9 @@
                 });
             }
             $("#enter").click(function () {
-                var name = $("#name").val();
+                var name = $("#name").val().trim();
                 if(name.length < 3){
-                    setMessage("Uw naam moet minimaal 2 karakters lang zijn", "#d11010");
+                    setMessage("Uw naam moet minimaal 3 karakters lang zijn", "#d11010");
                 }
                 else if(!isValidName(name)){
                     setMessage("Uw naam mag geen speciale tekens bevatten", "#d11010");
@@ -41,6 +41,9 @@
                     socket.on('canConnect', function(data){
                         sessionStorage.setItem("uid" ,data);
                         window.location.href = "/game";
+                    });
+                    socket.on("cannotConnect", function(data){
+                        setMessage("De speelkamer zit vol, probeer het over een paar minuten nog een keer", "#d11010");
                     });
                 }
             });

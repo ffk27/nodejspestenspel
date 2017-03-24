@@ -17,6 +17,7 @@ app.get('/', function(req,res){res.sendFile(__dirname + '/start.html');});
 app.get('/game', function(req,res){res.sendFile(path.join(__dirname+'/index.html'));});
 //Link CSS files
 app.get('/style.css', function(req,res){res.sendFile(path.join(__dirname+'/style.css'));});
+app.get('/game.css', function(req,res){res.sendFile(path.join(__dirname+'/game.css'));});
 app.get('/startscreen.css', function(req,res){res.sendFile(path.join(__dirname+'/startscreen.css'));});
 //Link JS files
 app.get('/script.js', function(req,res){res.sendFile(path.join(__dirname+'/script.js'));});
@@ -27,9 +28,13 @@ io.on('connection', function (socket) {
     socket.on('player', function (data) {
         var pattern = /[^\w+]/g;
         if(data.match(pattern) == null && data != "") {
-            var uid = Math.random().toString(22);
-            players[players.length]={'name': data, 'uid': uid, 'socket': socket, 'cards': []};
-            socket.emit('canConnect',uid);
+            if(players.length < 4) {
+                var uid = Math.random().toString(22);
+                players[players.length] = {'name': data, 'uid': uid, 'socket': socket, 'cards': []};
+                socket.emit('canConnect', uid);
+            }
+            else
+                socket.emit("cannotConnect");
         }
     });
 
