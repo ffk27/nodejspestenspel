@@ -33,7 +33,7 @@ io.on('connection', function (socket) {
                     socket.emit("gameStarted");
                 else {
                     var uid = Math.random().toString(22);
-                    players[players.length] = {'name': data, 'uid': uid, 'socket': socket, 'cards': []};
+                    players.push({'name': data, 'uid': uid, 'socket': socket, 'cards': []});
                     socket.emit('canConnect', uid);
                 }
             }
@@ -87,7 +87,7 @@ function update() {
         for (var i2=0; i2<players.length; i2++) {
             if (players[i2].uid !== player.uid) {
                 console.log( players[i2]);
-                otherplayerinfo[otherplayerinfo.length] = {'name': players[i2].name, 'cardcount': players[i2].cards.length };
+                otherplayerinfo.push({'name': players[i2].name, 'cardcount': players[i2].cards.length });
             }
         }
         var game = {'playercards':player.cards, 'topstash': stash[stash.length-1], 'otherplayerinfo': otherplayerinfo};
@@ -102,7 +102,7 @@ function distributeCards () {
     // kaarten verdelen onder spelers
     for (var i = 0; i < players.length; i++) {
         for (var c = cardsPos; c < (i+1)*handSize; c++) {
-            players[i]['cards'][players[i]['cards'].length] = cards[c];
+            players[i]['cards'].push(cards[c]);
             console.log(cards[c]);
         }
         cardsPos += handSize;
@@ -122,11 +122,11 @@ function fillCardArray() {
     var ts = ['H','D','C','S']; //Kaarttypes harten(H), ruiten(D), schoppen(C), klaver(S)
     for (var i=0; i < cs.length; i++) {
         for (var i2=0; i2<ts.length; i2++) {
-            cards[cards.length] = {'card': cs[i], 'type': ts[i2]};
+            cards.push({'card': cs[i], 'type': ts[i2]});
         }
     }
-    cards[cards.length] = {'card': 'Joker', 'type': '1'};
-    cards[cards.length] = {'card': 'Joker', 'type': '2'};
+    cards.push({'card': 'Joker', 'type': '1'});
+    cards.push({'card': 'Joker', 'type': '2'});
 }
 
 function shuffle(cards) {
