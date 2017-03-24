@@ -39,24 +39,3 @@
     background: #ffc67c;
 }
 
-#enter{
-    width: 125px;
-    height: 35px;
-    margin-top: 15px;
-    background: #bf0f0f;
-    border-color: red;
-    border-radius: 70px;
-    cursor: pointer;
-    letter-spacing: 1px;
-    text-shadow: 0;
-    color: whitesmoke;
-    font-weight: bold;
-    transition: all 0.25s ease;
-    font-size: 14px;
-    outline: none;
-}
-
-#enter:hover{
-    background: #ff1e1e;
-    color: white;
-}

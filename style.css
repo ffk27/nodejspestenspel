@@ -4,6 +4,7 @@ body {
     background-size:100%;
     font-family: 'Roboto', sans-serif;
     font-size:16px;
+    color: white;
 }
 
 h1 {
@@ -30,6 +31,8 @@ header {
 #content {
     position: relative;
     width:100%;
+    margin-left: 40%;
+    margin-top: 20%;
 }
 
 #controls button {
@@ -46,4 +49,30 @@ footer {
     position: fixed;
     height:50px;
     bottom:0;
+}
+
+#trekstapel{
+    float: left;
+}
+
+input[type="button"]{
+    width: 135px;
+    height: 35px;
+    margin-top: 15px;
+    background: #bf0f0f;
+    border-color: red;
+    border-radius: 70px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-shadow: 0;
+    color: whitesmoke;
+    font-weight: bold;
+    transition: all 0.25s ease;
+    font-size: 14px;
+    outline: none;
+}
+
+input[type="button"]:hover{
+    background: #ff1e1e;
+    color: white;
 }

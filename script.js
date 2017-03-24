@@ -26,6 +26,7 @@ $(document).ready(function () {
 
     socket.on('update', function (game) {
         displayCards(game);
+        showPlayerNames(game)
     });
 });
 
@@ -54,8 +55,10 @@ function displayCards(game) {
             'style="margin-top:' + pxdown + 'px;margin-left:' + pxright + 'px;"/>'
         );
     }
+}
 
-    var playersinfo = '';
+function showPlayerNames(game){
+    var playersinfo = 'banaan';
 
     for (var i=0; i<game.otherplayerinfo.length; i++) {
         var otherplayer = game.otherplayerinfo[i];
@@ -63,5 +66,5 @@ function displayCards(game) {
 
         playersinfo+=otherplayer.name + ' cards: ' + otherplayer.cardcount + '<br/>';
     }
-    $('#otherplayers').html(playersinfo);
+    $('#allplayers').html(playersinfo);
 }
