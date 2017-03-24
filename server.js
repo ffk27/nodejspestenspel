@@ -29,12 +29,16 @@ io.on('connection', function (socket) {
         var pattern = /[^\w+]/g;
         if(data.match(pattern) == null && data != "") {
             if(players.length < 4) {
-                var uid = Math.random().toString(22);
-                players[players.length] = {'name': data, 'uid': uid, 'socket': socket, 'cards': []};
-                socket.emit('canConnect', uid);
+                if(deck.length > 0)
+                    socket.emit("gameStarted");
+                else {
+                    var uid = Math.random().toString(22);
+                    players[players.length] = {'name': data, 'uid': uid, 'socket': socket, 'cards': []};
+                    socket.emit('canConnect', uid);
+                }
             }
             else
-                socket.emit("cannotConnect");
+                socket.emit("roomFull");
         }
     });
 
