@@ -37,9 +37,7 @@ function startGame() {
 function displayCards(game) {
     var playercards = game.playercards;
 
-    if (game.deckcount>0) {
-        $('#trekstapel').html('<img src="/img/cards-svg/Card_back_01.svg"/>');
-    }
+    $('#trekstapel').html('<img src="/img/cards-svg/Card_back_01.svg"/>');
 
     $('#aflegstapel').html(
         '<img class="card" id="'+game.topstash.card+game.topstash.type+'" draggable="true" ondragstart="drag(event)" ' +
@@ -61,6 +59,8 @@ function displayCards(game) {
 
     for (var i=0; i<game.otherplayerinfo.length; i++) {
         var otherplayer = game.otherplayerinfo[i];
+        console.log(otherplayer);
+
         playersinfo+=otherplayer.name + ' cards: ' + otherplayer.cardcount + '<br/>';
     }
     $('#otherplayers').html(playersinfo);

@@ -76,11 +76,12 @@ function update() {
         var player = players[i];
         var otherplayerinfo = [];
         for (var i2=0; i2<players.length; i2++) {
-            if (players[i2]!=player) {
-                otherplayerinfo[otherplayerinfo.length] = {'name': players[i2].name, 'cardcount': players[i2].cards.count };
+            if (players[i2].uid !== player.uid) {
+                console.log( players[i2]);
+                otherplayerinfo[otherplayerinfo.length] = {'name': players[i2].name, 'cardcount': players[i2].cards.length };
             }
         }
-        var game = {'playercards':player.cards, 'topstash': stash[stash.length-1], 'deckcount': deck.length, 'otherplayerinfo': otherplayerinfo};
+        var game = {'playercards':player.cards, 'topstash': stash[stash.length-1], 'otherplayerinfo': otherplayerinfo};
         player.socket.emit('update', game);
     }
 }
