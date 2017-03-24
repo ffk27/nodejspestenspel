@@ -9,37 +9,6 @@
     <script src="script.js"></script>
 
     <title>Pesten Online</title>
-    <style>
-        .stapel {
-            display: inline-block;
-            width: 102px;
-            height: 149px;
-            border: 2px solid black;
-        }
-    </style>
-    <script>
-        function allowDrop(ev) {
-            ev.preventDefault();
-        }
-
-        function drag(ev) {
-            ev.dataTransfer.setData("card", ev.target.id);
-        }
-
-        function drop(ev) {
-            ev.preventDefault();
-            var data = ev.dataTransfer.getData("card");
-            socket.emit('legop', data);
-            socket.on('magopleggen', function(data) {
-                if (ev.target.firstChild) {
-                    ev.target.replaceChild(document.getElementById(data),ev.target.firstChild);
-                }
-                else {
-                    ev.target.appendChild(document.getElementById(data));
-                }
-            });
-        }
-    </script>
 </head>
 <body>
 <section id="wrapper">
@@ -51,7 +20,7 @@
         <input type="button" onclick="startGame()" value="SPEL STARTEN">
     </section>
     <section id="playersinfo">
-        Medespelers:<br>
+        Spelers:<br>
         <div id="allplayers"></div>
     </section>
     <section id="content">

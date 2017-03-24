@@ -22,3 +22,10 @@
 #trekstapel{
     /*float: left;*/
 }
+
+.stapel {
+    display: inline-block;
+    width: 102px;
+    height: 149px;
+    border: 2px solid black;
+}

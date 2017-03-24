@@ -1,37 +1,55 @@
 var socket;
 
+function allowDrop(ev) {
+    ev.preventDefault();
+}
+
+function drag(ev) {
+    ev.dataTransfer.setData("card", ev.target.id);
+}
+
+function drop(ev) {
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("card");
+    socket.emit('legop', data);
+    socket.on('magopleggen', function(data) {
+        $('#'+data).hide();
+    });
+}
+
 $(document).ready(function () {
     socket = io.connect('http://localhost:8000');
+    socket.on('connect', function () {
+        var uid = sessionStorage.getItem("uid");
 
-    var uid = sessionStorage.getItem("uid");
+        if (uid !== null) {
+            socket.emit('tryReconnect', uid);
+        }
+        else {
+            window.location.href = '/';
+        }
 
-    if (uid != null) {
-        socket.emit('tryReconnect', uid);
-        socket.on('canReconnect', function (player) {
-            console.log(player);
+        socket.on('entername', function () {
+            window.location.href = '/';
         });
-    }
-    else {
-        window.location.href = '/';
-    }
 
-    socket.on('entername', function () {
-        window.location.href = '/';
-    });
+        socket.on('gameStart', function () {
+            //delete start button
+            $('#controls').hide();
+        });
 
-    socket.on('gameStart', function () {
-        //delete start button
-        $('#controls').hide();
-    });
+        socket.on('update', function (game) {
+            displayCards(game);
+            showPlayerNames(game.playersinfo);
+        });
 
-    socket.on('update', function (game) {
-        displayCards(game);
-        showPlayerNames(game)
+        socket.on('playerConnect', function (playerinfo) {
+            showPlayerNames(playerinfo);
+        });
     });
 });
 
 function startGame() {
-    socket = io.connect('http://localhost:8000');
     socket.emit('tryStart');
 }
 
@@ -45,25 +63,28 @@ function displayCards(game) {
         'src="img/cards-svg/'+game.topstash.card+game.topstash.type+'.svg" />'
     );
 
+    var cardshtml = '';
+
     for(var i = 0; i < playercards.length; i++){
         var pxdown = 0;
         var pxright = i * 16;//*16 on 10% //*14 on 8%
-        $("#playercards").append(
-            '<img class="card" id="'+playercards[i].card+playercards[i].type+'" draggable="true" ondragstart="drag(event)" ' +
+        cardshtml += '<img class="card" id="'+playercards[i].card+playercards[i].type+'" draggable="true" ondragstart="drag(event)" ' +
             'src="img/cards-svg/'+playercards[i].card+playercards[i].type+'.svg" ' +
             'style="margin-top:' + pxdown + 'px;margin-left:' + pxright + 'px;"/>'
-        );
     }
+
+    $("#playercards").html(cardshtml);
 }
 
-function showPlayerNames(game){
+function showPlayerNames(players){
     var playersinfo = '';
 
-    for (var i=0; i<game.otherplayerinfo.length; i++) {
-        var otherplayer = game.otherplayerinfo[i];
-        console.log(otherplayer);
+    for (var i=0; i<players.length; i++) {
+        var player = players[i];
 
-        playersinfo+=otherplayer.name + ' cards: ' + otherplayer.cardcount + '<br/>';
+        playersinfo+=player.name;
+        playersinfo+=' kaarten: ' + player.cardcount;
+        playersinfo+='<br/>';
     }
     $('#allplayers').html(playersinfo);
 }

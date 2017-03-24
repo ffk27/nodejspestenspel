@@ -33,7 +33,8 @@ io.on('connection', function (socket) {
                     socket.emit("gameStarted");
                 else {
                     var uid = Math.random().toString(22);
-                    players.push({'name': data, 'uid': uid, 'socket': socket, 'cards': []});
+                    var player = {'name': data, 'uid': uid, 'socket': socket, 'cards': []};
+                    players.push(player);
                     socket.emit('canConnect', uid);
                 }
             }
@@ -42,15 +43,13 @@ io.on('connection', function (socket) {
         }
     });
 
-    socket.on('tryReconnect', function(data){
+    socket.on('tryReconnect', function(uid){
         for(var i = 0; i < players.length; i++){
-            if(players[i].uid == data){
+            if(players[i].uid == uid){
                 players[i].socket = socket;
-                socket.emit('canReconnect',players[i].name);
                 //Als speler al in een spel was, laat kaarten weer zien.
-                if (cards.length>0) {
-                    update();
-                }
+                update();
+
                 return;
             }
         }
@@ -60,7 +59,7 @@ io.on('connection', function (socket) {
     socket.on('tryStart', function() {
         //check aantal spelers en of het spel nog niet gestart is
         //...
-        if (players.length>1 && cards.length==0) {
+        if (players.length>0 && cards.length===0) {
             //nieuw Deck aanmaken
             fillCardArray();
 
@@ -77,22 +76,73 @@ io.on('connection', function (socket) {
             }
         }
     });
+
+    socket.on('legop', function (card) {
+       if (!card.includes('Joker')) {
+           var c = card[0];
+           var t = card[1];
+           var topstash = stash[stash.length-1];
+           //Kijk of kaart of type overeenkomt. Joker mag overal op.
+           if (c===topstash.card || t===topstash.type || topstash.card==='Joker') {
+               legop(socket,c,t);
+           }
+       }
+       else {
+           legop(socket,'Joker',card[card.length-1]);
+       }
+    });
 });
 
+function legop(socket,c,t) {
+    var player = getPlayer(socket.id);
+
+    //Controleer of de speler deze kaart wel degelijk heeft en niet manipuleert.
+    for (var i=0; i<player.cards.length; i++) {
+        if (player.cards[i].card===c && player.cards[i].type===t) {
+            //leg op aflegstapel
+            stash[stash.length]=player.cards[i];
+            //Verwijder kaart van spelerskaarten
+            player.cards.splice(i,1);
+            socket.emit('magopleggen',c+t);
+            update();
+        }
+    }
+}
+
+function getPlayer(socketid) {
+    for (var i = 0; i<players.length; i++) {
+        if (players[i].socket.id===socketid) {
+            return players[i];
+        }
+    }
+}
+
 function update() {
-    //Stuur spelinfo naar alles spelers
+    //Stuur spelinfo naar alle spelers
     for (var i=0; i<players.length; i++) {
         var player = players[i];
-        var otherplayerinfo = [];
-        for (var i2=0; i2<players.length; i2++) {
-            if (players[i2].uid !== player.uid) {
-                console.log( players[i2]);
-                otherplayerinfo.push({'name': players[i2].name, 'cardcount': players[i2].cards.length });
-            }
+
+        if (cards.length>0) {
+            var playerlist = getPlayerList(player);
+            var game = {'playercards':player.cards, 'topstash': stash[stash.length-1], 'playersinfo': playerlist};
+            player.socket.emit('update', game);
         }
-        var game = {'playercards':player.cards, 'topstash': stash[stash.length-1], 'otherplayerinfo': otherplayerinfo};
-        player.socket.emit('update', game);
+        else {
+            player.socket.emit('playerConnect',getPlayerList(player));
+        }
     }
+}
+
+function getPlayerList(player) {
+    var playerlist = [];
+    for (var i2=0; i2<players.length; i2++) {
+        var name = players[i2].name;
+        if (players[i2]===player) {
+            name += ' (Jij)';
+        }
+        playerlist.push({'name': name, 'cardcount': players[i2].cards.length });
+    }
+    return playerlist;
 }
 
 function distributeCards () {
@@ -103,7 +153,6 @@ function distributeCards () {
     for (var i = 0; i < players.length; i++) {
         for (var c = cardsPos; c < (i+1)*handSize; c++) {
             players[i]['cards'].push(cards[c]);
-            console.log(cards[c]);
         }
         cardsPos += handSize;
     }
