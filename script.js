@@ -38,7 +38,7 @@ function startGame() {
 function displayCards(game) {
     var playercards = game.playercards;
 
-    $('#trekstapel').html('<img src="/img/cards-svg/Card_back_01.svg"/>');
+    $('#trekstapel').html('<img src="/img/cards-svg/back.svg" class="card"/>');
 
     $('#aflegstapel').html(
         '<img class="card" id="'+game.topstash.card+game.topstash.type+'" draggable="true" ondragstart="drag(event)" ' +
