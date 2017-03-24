@@ -58,7 +58,7 @@ function displayCards(game) {
 }
 
 function showPlayerNames(game){
-    var playersinfo = 'banaan';
+    var playersinfo = '';
 
     for (var i=0; i<game.otherplayerinfo.length; i++) {
         var otherplayer = game.otherplayerinfo[i];
