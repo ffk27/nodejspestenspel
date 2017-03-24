@@ -42,7 +42,7 @@
                         sessionStorage.setItem("uid" ,data);
                         window.location.href = "/game";
                     });
-                    socket.on("cannotConnect", function(data){
+                    socket.on("cannotConnect", function(data){   // Room is full
                         setMessage("De speelkamer zit vol, probeer het over een paar minuten nog een keer", "#d11010");
                     });
                 }
