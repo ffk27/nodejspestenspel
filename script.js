@@ -42,13 +42,12 @@ function displayCards(game) {
 
     $('#aflegstapel').html(
         '<img class="card" id="'+game.topstash.card+game.topstash.type+'" draggable="true" ondragstart="drag(event)" ' +
-        'src="img/cards-svg/'+game.topstash.card+game.topstash.type+'.svg" ' +
-        'style="margin-top:' + pxdown + 'px;margin-left:' + pxright + 'px;"/>'
+        'src="img/cards-svg/'+game.topstash.card+game.topstash.type+'.svg" />'
     );
 
     for(var i = 0; i < playercards.length; i++){
         var pxdown = 0;
-        var pxright = i * 12;//*10 on 8% width
+        var pxright = i * 16;//*16 on 10% //*14 on 8%
         $("#playercards").append(
             '<img class="card" id="'+playercards[i].card+playercards[i].type+'" draggable="true" ondragstart="drag(event)" ' +
             'src="img/cards-svg/'+playercards[i].card+playercards[i].type+'.svg" ' +

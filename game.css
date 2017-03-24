@@ -5,3 +5,20 @@
 #allplayers{
     margin-top: 10px;
 }
+
+#controls button {
+    padding:5px 10px;
+}
+
+.card {
+    width: 10%;
+    height: auto;
+    position: absolute;
+}
+#playercards .card:hover {
+    width:12%;
+}
+
+#trekstapel{
+    /*float: left;*/
+}

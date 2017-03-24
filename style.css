@@ -35,24 +35,10 @@ header {
     margin-top: 20%;
 }
 
-#controls button {
-    padding:5px 10px;
-}
-
-.card {
-    width: 8%;
-    height: auto;
-    position: absolute;
-}
-
 footer {
     position: fixed;
     height:50px;
     bottom:0;
-}
-
-#trekstapel{
-    float: left;
 }
 
 input[type="button"]{
