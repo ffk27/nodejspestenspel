@@ -7,8 +7,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
     <script>
-        function setMessage(message, color){
-            $("#message").hide().fadeIn().html(message).css("color", color).delay(2000).fadeOut();
+        function setMessage(message){
+            $("#message").hide().fadeIn().html(message).css("color", "#d11010").delay(2000).fadeOut();
         }
 
         function isValidName(input){
@@ -31,11 +31,11 @@
             $("#enter").click(function () {
                 var name = $("#name").val().trim();
                 if(name.length == "")
-                    setMessage("U moet uw naam invullen voordat u kan beginnnen met spelen", "#d11010");
+                    setMessage("U moet uw naam invullen voordat u kan beginnnen met spelen");
                 else if(name.length < 3)
-                    setMessage("Uw naam moet minimaal 3 karakters lang zijn", "#d11010");
+                    setMessage("Uw naam moet minimaal 3 karakters lang zijn");
                 else if(!isValidName(name))
-                    setMessage("Uw naam mag geen speciale tekens bevatten", "#d11010");
+                    setMessage("Uw naam mag geen speciale tekens bevatten");
                 else{
                     socket.emit('player', name);
                     socket.on('canConnect', function(data){
@@ -43,10 +43,10 @@
                         window.location.href = "/game";
                     });
                     socket.on("roomFull", function(data){   // Room is full
-                        setMessage("De speelkamer zit vol, probeer het over een paar minuten nog een keer", "#d11010");
+                        setMessage("De speelkamer zit vol, probeer het over een paar minuten nog een keer");
                     });
                     socket.on("gameStarted", function (data) {
-                        setMessage("Er is momenteel spel actief, probeer het over een paar minuten nog een keer", "#d11010");
+                        setMessage("Er is momenteel spel actief, probeer het over een paar minuten nog een keer");
                     });
                 }
             });
