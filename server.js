@@ -69,6 +69,7 @@ io.on('connection', function (socket) {
 
             //willekeurige speler mag starten
             game.turn = game.players[Math.floor(Math.random() * game.players.length)];
+            game.turn.canpull=true;
 
             for (var i=0; i<game.players.length; i++) {
                 var player = game.players[i];
@@ -82,38 +83,34 @@ io.on('connection', function (socket) {
         //Kaart trekken
         var player = getPlayer(socket.id);
         //Controleer of de speler wel aan de beurt is.
-        if (game.turn===player) {
-            player.cards.push(game.deck[game.deck.length-1]);
+        if (game.turn===player && game.turn.canpull) {
+            var pulledcard = game.deck[game.deck.length-1];
+            player.cards.push(pulledcard);
             game.deck.splice(game.deck.length-1,1);
+            var topstash = game.stash[game.stash.length-1];
             update(game);
+
+            if (kanOpleggen(player,pulledcard)) {
+                //todo hier
+                setTimeout(function () {
+                    changeTurn(1);
+                    update(game);
+                },5000);
+            }
+            else {
+                changeTurn(1);
+            }
         }
     });
 
-    socket.on('legop', function (card) {
+    socket.on('legop', function (cardstr) {
         var player = getPlayer(socket.id);
-        //Controleer of de speler wel aan de beurt is, en of hij niet een kleur moet kiezen.
-        if (game.turn===player && player.choosesuit!==true) {
-            if (!card.includes('Joker')) {
-                var c,t;
-                if (card.length===3) { //10S bijvoorbeeld
-                    c = card[0] + card[1];
-                    t = card[2];
-                }
-                else {
-                    c = card[0];
-                    t = card[1];
-                }
-                var topstash = game.stash[game.stash.length-1];
-                //Kijk of kaart of type overeenkomt. Joker mag overal op.
-                if (topstash.card==='J' && game.suit===t) {
-                    legop(player,c,t);
-                }
-                else if (c===topstash.card || t===topstash.type || topstash.card==='Joker') {
-                    legop(player,c,t);
-                }
-            }
-            else {
-                legop(player,'Joker',card[card.length-1]);
+        var cardobj = cardStringtoObj(cardstr);
+        var card = playerhascard(player,cardobj);
+        //Controleer of de speler de kaart wel degelijk heeft.
+        if (card !== null) {
+            if (kanOpleggen(player, card)) {
+                legop(player, card);
             }
         }
     });
@@ -135,44 +132,88 @@ io.on('connection', function (socket) {
     });
 });
 
-function legop(player,c,t) {
-    //Controleer of de speler deze kaart wel degelijk heeft en niet manipuleert.
-    for (var i=0; i<player.cards.length; i++) {
-        if (player.cards[i].card===c && player.cards[i].type===t) {
-            //leg op aflegstapel
-            game.stash[game.stash.length]=player.cards[i];
-            //Verwijder kaart van spelerskaarten
-            player.cards.splice(i,1);
-            switch (c) {
-                case 'A':
-                    //Als de opgelegde kaart een aas was, draai de beurtvolgorde om.
-                    game.clockwise = !game.clockwise;
-                    changeTurn(1);
-                    break;
-                case '2':
-                    //pestkaart, 2 pakken voor de volgende
-                    changeTurn(1);
-                    break;
-                case '7':
-                    break;
-                case '8':
-                    changeTurn(2);
-                    break;
-                case 'J':
-                    player.choosesuit=true;
-                    break;
-                case 'Joker':
-                    //pestkaart, 5 pakken voor de volgende
-                    changeTurn(1);
-                    break;
-                default:
-                    changeTurn(1);
-            }
-            player.socket.emit('magopleggen',c+t);
-            game.suit=t;
-            update(game);
+function cardStringtoObj(card) {
+    if (!card.includes('Joker')) {
+        var c, t;
+        if (card.length === 3) { //10S bijvoorbeeld
+            c = card[0] + card[1];
+            t = card[2];
+        }
+        else {
+            c = card[0];
+            t = card[1];
+        }
+        return {'card': c, 'type': t};
+    }
+    else {
+        return {'card': 'Joker', 'type': card[card.length-1] };
+    }
+}
+
+function kanOpleggen(player, card) {
+    //Controleer of de speler wel aan de beurt is, en of hij niet een kleur moet kiezen
+    if (game.turn === player && player.choosesuit !== true) {
+        var topstash = game.stash[game.stash.length - 1];
+
+        //Kijk of kaart of type overeenkomt. Joker mag overal op.
+        if (card.card === 'Joker') {
+            return true;
+        }
+        else if (topstash.card === 'J' && game.suit === card.type) {
+            return true;
+        }
+        else if (card.card === topstash.card || card.type === topstash.type || topstash.card === 'Joker') {
+            return true;
         }
     }
+    return false;
+}
+
+//Deze funcie controleert of de speler deze kaart wel degelijk heeft en niet manipuleert.
+function playerhascard(player,card) {
+
+    for (var i=0; i<player.cards.length; i++) {
+
+        if (player.cards[i].card === card.card && player.cards[i].type === card.type) {
+            return player.cards[i];
+        }
+    }
+    return null;
+}
+
+function legop(player,card) {
+    //leg op aflegstapel
+    game.stash[game.stash.length]=card;
+    //Verwijder kaart van spelerskaarten
+    player.cards.splice(player.cards.indexOf(card),1);
+    switch (card.card) {
+        case 'A':
+            //Als de opgelegde kaart een aas was, draai de beurtvolgorde om.
+            game.clockwise = !game.clockwise;
+            changeTurn(1);
+            break;
+        case '2':
+            //pestkaart, 2 pakken voor de volgende
+            changeTurn(1);
+            break;
+        case '7':
+            break;
+        case '8':
+            changeTurn(2);
+            break;
+        case 'J':
+            player.choosesuit=true;
+            break;
+        case 'Joker':
+            //pestkaart, 5 pakken voor de volgende
+            changeTurn(1);
+            break;
+        default:
+            changeTurn(1);
+    }
+    player.socket.emit('magopleggen',card.card+card.type);
+    game.suit=card.type;
+    update(game);
 }
 
 function changeTurn(num) {
@@ -194,6 +235,8 @@ function changeTurn(num) {
     else {
         game.turn=game.players[playerindex];
     }
+    //Speler die aan de beurt is, kan een kaart trekken.
+    game.turn.canpull=true;
 }
 
 function getPlayer(socketid) {

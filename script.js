@@ -80,7 +80,6 @@ function displayCards(game) {
     var playercards = game.playercards;
 
     var s='';
-    console.log(game);
     switch(game.suit) {
         case 'H':
             s='♥';
