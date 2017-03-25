@@ -8,6 +8,19 @@ function drag(ev) {
     ev.dataTransfer.setData("card", ev.target.id);
 }
 
+function pull(ev) {
+    //kaart trekken
+    ev.dataTransfer.setData("card", 'newcard');
+}
+
+function put(ev) {
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("card");
+    if (data==='newcard') {
+        socket.emit('pull');
+    }
+}
+
 function drop(ev) {
     ev.preventDefault();
     var data = ev.dataTransfer.getData("card");
@@ -40,6 +53,12 @@ $(document).ready(function () {
 
         socket.on('update', function (game) {
             displayCards(game);
+            if (game.choosesuit===true) {
+                $('#suits').show();
+            }
+            else {
+                $('#suits').hide();
+            }
             showPlayerNames(game.playersinfo);
         });
 
@@ -53,10 +72,32 @@ function startGame() {
     socket.emit('tryStart');
 }
 
+function chooseSuit(suit) {
+    socket.emit('chooseSuit',suit);
+}
+
 function displayCards(game) {
     var playercards = game.playercards;
 
-    $('#trekstapel').html('<img src="/img/cards-svg/back.svg" class="card"/>');
+    var s='';
+    console.log(game);
+    switch(game.suit) {
+        case 'H':
+            s='♥';
+            break;
+        case 'D':
+            s='♦';
+            break;
+        case 'S':
+            s='♠';
+            break;
+        case 'C':
+            s='♣';
+            break;
+    }
+    $('#suit').html(s);
+
+    $('#trekstapel').html('<img draggable="true" ondragstart="pull(event)" src="/img/cards-svg/back.svg" class="card"/>');
 
     $('#aflegstapel').html(
         '<img class="card" id="'+game.topstash.card+game.topstash.type+'" draggable="true" ondragstart="drag(event)" ' +
@@ -81,10 +122,28 @@ function showPlayerNames(players){
 
     for (var i=0; i<players.length; i++) {
         var player = players[i];
-
+        playersinfo+='<div class="';
+        if (player.you===true) {
+            playersinfo+='you';
+        }
+        if (player.turn===true) {
+            playersinfo+=' turn';
+        }
+        playersinfo+='">';
         playersinfo+=player.name;
+        if (player.you===true) {
+            playersinfo+=' (Jij)';
+        }
         playersinfo+=' kaarten: ' + player.cardcount;
-        playersinfo+='<br/>';
+        if (player.turn===true) {
+            if (player.clockwise === true) {
+                playersinfo += ' ⇓';
+            }
+            else {
+                playersinfo += ' ⇑';
+            }
+        }
+        playersinfo+='</div>';
     }
     $('#allplayers').html(playersinfo);
 }

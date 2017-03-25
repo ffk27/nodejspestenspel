@@ -29,3 +29,24 @@
     height: 149px;
     border: 2px solid black;
 }
+
+#suits {
+    text-align: center;
+    display: none;
+}
+
+#suits button {
+    font-size: 150%;
+}
+
+.diamond, .hart {
+    color: red;
+}
+
+.turn {
+    color: yellow;
+}
+
+.you {
+    font-size: 150%;
+}

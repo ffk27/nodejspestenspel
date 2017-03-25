@@ -26,7 +26,15 @@
     <section id="content">
         <section class="stapel" id="trekstapel"></section>
         <section class="stapel" id="aflegstapel" ondrop="drop(event)" ondragover="allowDrop(event)"></section>
-        <section id="playercards"></section>
+        <section id="suits">
+            <button class="hart" onclick="chooseSuit('H')">♥</button>
+            <button class="diamond" onclick="chooseSuit('D')">♦</button>
+            <button class="spade" onclick="chooseSuit('S')">♠</button>
+            <button class="club" onclick="chooseSuit('C')">♣</button>
+            <br/>↑ Kies kleur
+        </section>
+        <div id="suit"></div>
+        <section id="playercards" ondrop="put(event)" ondragover="allowDrop(event)"></section>
     </section>
 
     <footer>
