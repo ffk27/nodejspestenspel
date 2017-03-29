@@ -43,10 +43,6 @@
     background: #ffc67c;
 }
 @media only screen and (max-width: 768px) {
-    body {
-        margin:0;
-        padding:0;
-    }
     #startbox {
         width:100%;
         max-width: inherit;
