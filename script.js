@@ -42,6 +42,17 @@ function drop(ev) {
 $(document).ready(function () {
     socket = io.connect('http://localhost:8000');
     socket.on('connect', function () {
+
+        // Plays the audio file
+        var audio = new Audio('FichtlsLied.mp3');
+
+        $(audio).bind('ended', function()  {
+            audio.currentTime = 0;
+            audio.play();
+        });
+
+        audio.play();
+
         var uid = sessionStorage.getItem("uid");
 
         if (uid !== null) {
@@ -77,6 +88,8 @@ $(document).ready(function () {
             showPlayerNames(playerinfo);
         });
     });
+
+
 });
 
 function startGame() {
@@ -150,6 +163,9 @@ function showPlayerNames(players){
             playersinfo+=' turn';
         }
         playersinfo+='">';
+        if(player.turn === true){
+            playersinfo += '<span id="turnarrow">&#8674;</span>';
+        }
         playersinfo+=player.name;
         if (player.you===true) {
             playersinfo+=' (Jij)';
@@ -167,3 +183,4 @@ function showPlayerNames(players){
     }
     $('#allplayers').html(playersinfo);
 }
+

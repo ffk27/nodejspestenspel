@@ -6,6 +6,13 @@
     margin-top: 10px;
 }
 
+#turnarrow{
+    display: inline;
+    letter-spacing: 5px;
+    vertical-align: -15%;
+    font-size: 200%;
+}
+
 #controls button {
     padding:5px 10px;
 }

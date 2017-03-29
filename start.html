@@ -8,17 +8,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
     <script>
-        function setMessage(message){
-            $("#message").hide().fadeIn().html(message).css("color", "#d11010").delay(2000).fadeOut();
-        }
-
-        function isValidName(input){
-            var pattern = /[^\w+]/g;
-            if(input.match(pattern) == null){
-                return true;
-            }
-            return false;
-        }
 
         $(document).ready(function() {
             var socket = io.connect('http://localhost:8000');
@@ -56,6 +45,20 @@
     <title>Pesten Online</title>
 </head>
 <body>
+<script>
+    function setMessage(message){
+        $("#message").html(message).css("color", "#d11010").delay(2000).fadeOut();
+    }
+
+    function isValidName(input){
+        var pattern = /[^\w+]/g;
+        if(input.match(pattern) == null){
+            return true;
+        }
+        return false;
+    }
+</script>
+
 <aside id="asideright">
 
 </aside>

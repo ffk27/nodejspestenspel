@@ -21,6 +21,7 @@ app.get('/startscreen.css', function(req,res){res.sendFile(path.join(__dirname+'
 app.get('/script.js', function(req,res){res.sendFile(path.join(__dirname+'/script.js'));});
 //Link Images
 app.use('/img', express.static('img'));
+app.get('/FichtlsLied.mp3', function(req,res){res.sendFile(path.join(__dirname+'/FichtlsLied.mp3'));});
 
 io.on('connection', function (socket) {
     socket.on('player', function (data) {
