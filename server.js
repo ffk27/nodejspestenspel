@@ -74,6 +74,7 @@ io.on('connection', function (socket) {
             for (var i=0; i<game.players.length; i++) {
                 var player = game.players[i];
                 player.socket.emit('gameStart');
+                startTurn();
                 update(game);
             }
         }
@@ -84,22 +85,19 @@ io.on('connection', function (socket) {
         var player = getPlayer(socket.id);
         //Controleer of de speler wel aan de beurt is.
         if (game.turn===player && game.turn.canpull) {
-            var pulledcard = game.deck[game.deck.length-1];
-            player.cards.push(pulledcard);
-            game.deck.splice(game.deck.length-1,1);
-            var topstash = game.stash[game.stash.length-1];
+            pullCard(player);
             update(game);
 
+            player.canpull=false;
+
             if (kanOpleggen(player,pulledcard)) {
-                //todo hier
-                setTimeout(function () {
-                    changeTurn(1);
-                    update(game);
-                },5000);
+                game.timer=5;
             }
             else {
                 changeTurn(1);
             }
+            update(game);
+
         }
     });
 
@@ -131,6 +129,13 @@ io.on('connection', function (socket) {
         }
     });
 });
+
+function pullCard(player) {
+    var pulledcard = game.deck[game.deck.length-1];
+    player.cards.push(pulledcard);
+    game.deck.splice(game.deck.length-1,1);
+    var topstash = game.stash[game.stash.length-1];
+}
 
 function cardStringtoObj(card) {
     if (!card.includes('Joker')) {
@@ -217,26 +222,50 @@ function legop(player,card) {
 }
 
 function changeTurn(num) {
-    if (game.players.length===1) {
-        return;
-    }
-    var playerindex = game.players.indexOf(game.turn);
-    if (!game.clockwise) {
-        num = num * -1;
-    }
-    playerindex = playerindex+num;
+    if (game.players.length>1) {
+        var playerindex = game.players.indexOf(game.turn);
+        if (!game.clockwise) {
+            num = num * -1;
+        }
+        playerindex = playerindex+num;
 
-    if (playerindex < 0) {
-        game.turn=game.players[(game.players.length)+playerindex];
+        if (playerindex < 0) {
+            game.turn=game.players[(game.players.length)+playerindex];
+        }
+        else if (playerindex > game.players.length -1) {
+            game.turn=game.players[playerindex - game.players.length];
+        }
+        else {
+            game.turn=game.players[playerindex];
+        }
     }
-    else if (playerindex > game.players.length -1) {
-        game.turn=game.players[playerindex - game.players.length];
-    }
-    else {
-        game.turn=game.players[playerindex];
-    }
-    //Speler die aan de beurt is, kan een kaart trekken.
+    //Speler die aan de beurt is, mag een kaart trekken.
     game.turn.canpull=true;
+    startTurn();
+}
+
+function startTurn() {
+    clearInterval(game.interval);
+
+    var timer = 10;
+    //Bij pestkaarten krijgt de volgende speler extra tijd om na te denken, dit kan verder uitgewerkt worden in de toekomst.
+    if (game.stash[game.stash.length-1].card==='Joker' || game.stash[game.stash.length-1].card==='2') {
+        timer=timer*2;
+    }
+    game.timer=timer;
+
+    game.interval = setInterval(function () {
+        game.timer--;
+        if (game.timer<0) {
+            if (game.turn.canpull) {
+                //Als de tijd om is en de speler heeft nog geen kaart gepakt, pak hem automatisch
+                pullCard(game.turn);
+            }
+            clearInterval(game.interval);
+            changeTurn(1);
+            update(game);
+        }
+    },1000);
 }
 
 function getPlayer(socketid) {
@@ -253,7 +282,7 @@ function update(g) {
         var player = g.players[i];
         if (g.cards.length>0) {
             var playerlist = getPlayerList(player);
-            var info = {'playercards':player.cards, 'topstash': g.stash[g.stash.length-1], 'playersinfo': playerlist, 'suit': g.suit };
+            var info = {'playercards':player.cards, 'topstash': g.stash[g.stash.length-1], 'playersinfo': playerlist, 'suit': g.suit, 'timer': g.timer };
             if (player.choosesuit===true) {
                 info.choosesuit=true;
             }

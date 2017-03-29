@@ -1,4 +1,5 @@
 var socket;
+var timer;
 
 function allowDrop(ev) {
     ev.preventDefault();
@@ -19,6 +20,14 @@ function put(ev) {
     if (data==='newcard') {
         socket.emit('pull');
     }
+}
+
+function setTimer(sec) {
+    timer = setInterval(function () {
+        $('#timer').html(sec);
+        sec--;
+        if (sec<0) { clearInterval(timer) }
+    },1000);
 }
 
 function drop(ev) {
@@ -52,6 +61,8 @@ $(document).ready(function () {
         });
 
         socket.on('update', function (game) {
+            clearInterval(timer);
+            setTimer(game.timer);
             displayCards(game);
             if (game.choosesuit===true) {
                 $('#suits').show();
