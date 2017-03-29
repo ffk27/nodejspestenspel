@@ -5,17 +5,21 @@
 }
 
 #startbox{
-    width: 99%;
-    max-width:1000px;
-    height: 500px;
-    margin:5% auto;
-    border: solid 5px;
-    border-radius: 55px;
-    background: #c67b0b;
+    width: 100%;
+    max-width:600px;
+    height: 300px;
+    margin:2% auto;
+    border-radius: 50px;
+    background-color: rgba(243, 163, 89, 0.5);
+    border: 1px solid rgba(147, 184, 189,0.8);
+    box-shadow:
+            5px 10px 15px rgba(2, 22, 22,  0.7),
+            0px 0px 4px 2px rgba(2108, 223, 226, 0.4) inset;
 }
 
 #signin{
     text-align: center;
+    margin-top:10%;
 }
 
 #message{
