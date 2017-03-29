@@ -11,12 +11,16 @@
 }
 
 .card {
-    width: 10%;
-    height: auto;
-    position: absolute;
+    width: 102px;
+    height: 149px;
+}
+#playercards .card {
+    margin-left:25px;
+    z-index:999;
 }
 #playercards .card:hover {
-    width:12%;
+    width: 122px;
+    height: 179px;
 }
 
 #trekstapel{
@@ -50,3 +54,31 @@
 .you {
     font-size: 150%;
 }
+
+
+
+@media only screen and (max-width: 768px) {
+    #controls {
+        height:40px;
+        width:100%;
+        text-align:center;
+    }
+    .stapel {
+        width:70px;
+        height:105px;
+    }
+    .stapel .card {
+        width:70px;
+        height:105px;
+    }
+    #playercards .card {
+        width:70px;
+        height:105px;
+        margin-left:15px;
+    }
+    #playercards {
+        margin-left:-5%;
+        width:80%;
+    }
+}
+
