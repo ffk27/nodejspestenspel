@@ -58,7 +58,7 @@ io.on('connection', function (socket) {
     socket.on('tryStart', function() {
         //check aantal spelers en of het spel nog niet gestart is
         //...
-        if (game.players.length>1 && game.cards.length===0) {
+        if (game.players.length>0 && game.cards.length===0) {
             //nieuw Deck aanmaken
             fillCardArray();
 
@@ -89,7 +89,7 @@ io.on('connection', function (socket) {
         var player = getPlayer(socket.id);
         //Controleer of de speler wel aan de beurt is.
         if (game.turn===player && game.turn.canpull) {
-            pullCard(player);
+            var pulledcard = pullCard(player);
             update(game);
 
             player.canpull=false;
@@ -139,6 +139,7 @@ function pullCard(player) {
     player.cards.push(pulledcard);
     game.deck.splice(game.deck.length-1,1);
     var topstash = game.stash[game.stash.length-1];
+    return pulledcard;
 }
 
 function cardStringtoObj(card) {
