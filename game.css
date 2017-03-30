@@ -62,6 +62,12 @@
     font-size: 150%;
 }
 
+.onecard{
+    color: red;
+}
+
+
+
 #gamemessage{
     display: inline-block;
 }
