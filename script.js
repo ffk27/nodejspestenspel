@@ -28,7 +28,7 @@ function setTimer(sec) {
         sec--;
         if(sec < 5) {
             $("#timer").css({"color": "#d11010", "font-size": "150%"});
-            new Audio('biem.mp3').play();
+            new Audio('biem.mp3').play(); // Plays the countdown sound
         }
         else
             $("#timer").css({"color": "white", "font-size": "100%"});
@@ -180,6 +180,9 @@ function showPlayerNames(players){
         }
         if (player.turn===true) {
             playersinfo+=' turn';
+        }
+        if(player.cardcount === 1){
+            playersinfo+=' onecard';
         }
         playersinfo+='">';
         if(player.turn === true){
