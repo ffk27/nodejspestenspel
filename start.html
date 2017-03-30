@@ -33,7 +33,7 @@
                         window.location.href = "/game";
                     });
                     socket.on("roomFull", function(data){   // Room is full
-                        setMessage("De speelkamer zit vol, probeer het over een paar minuten nog een keer");
+                        setMessage("Het spel is al begonnen");
                     });
                     socket.on("gameStarted", function (data) {
                         setMessage("Er is momenteel spel actief, probeer het over een paar minuten nog een keer");
