@@ -26,6 +26,12 @@ function setTimer(sec) {
     timer = setInterval(function () {
         $('#timer').html(sec);
         sec--;
+        if(sec < 5) {
+            $("#timer").css({"color": "#d11010", "font-size": "150%"});
+            new Audio('biem.mp3').play();
+        }
+        else
+            $("#timer").css({"color": "white", "font-size": "100%"});
         if (sec<0) { clearInterval(timer) }
     },1000);
 }
@@ -43,7 +49,7 @@ $(document).ready(function () {
     socket = io.connect('http://localhost:8000');
     socket.on('connect', function () {
 
-        // Plays the audio file
+        // Plays the audio file and keeps it playing in loop
         var audio = new Audio('FichtlsLied.mp3');
 
         $(audio).bind('ended', function()  {
@@ -97,8 +103,6 @@ $(document).ready(function () {
             $("#gamemessage").hide().fadeIn().html("Er moeten minimaal twee spelers aanwezig zijn om een spel te kunnen starten").css("color", "#d11010").delay(2000).fadeOut();
         })
     });
-
-
 });
 
 function startGame() {

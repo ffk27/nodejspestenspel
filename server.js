@@ -21,7 +21,9 @@ app.get('/startscreen.css', function(req,res){res.sendFile(path.join(__dirname+'
 app.get('/script.js', function(req,res){res.sendFile(path.join(__dirname+'/script.js'));});
 //Link Images
 app.use('/img', express.static('img'));
+//Retrieve audio files
 app.get('/FichtlsLied.mp3', function(req,res){res.sendFile(path.join(__dirname+'/FichtlsLied.mp3'));});
+app.get('/biem.mp3', function(req,res){res.sendFile(path.join(__dirname+'/biem.mp3'));});
 app.get('/horse.mp3', function(req,res){res.sendFile(path.join(__dirname+'/horse.mp3'));});
 
 io.on('connection', function (socket) {
