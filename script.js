@@ -158,8 +158,8 @@ function displayCards(game) {
         var marginleft = "25px";
     }
 
-    if (game.pakken>1) {
-        $('#pakken').html('Pak ' + game.pakken + ' kaarten');
+    if (game.pakken>0) {
+        $('#pakken').html('Pak ' + game.pakken + ' kaarten of gooi een Joker/2 op.');
     }
     else {
         $('#pakken').html('');

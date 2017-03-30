@@ -33,11 +33,12 @@ io.on('connection', function (socket) {
         var pattern = /[^\w+]/g;
         if(data.match(pattern) == null && data != "") {
             if(game.players.length < 4) {
-                if(game.deck.length > 0)
+                //Als spel al gestart is, mag de speler niet verbinden
+                if(game.cards.length > 0)
                     socket.emit("gameStarted");
                 else {
                     var uid = Math.random().toString(22);
-                    var player = {'name': data, 'uid': uid, 'socket': socket, 'cards': []};
+                    var player = {'name': data, 'uid': uid, 'socket': socket, 'cards': [], 'disconnecton': null };
                     game.players.push(player);
                     socket.emit('canConnect', uid);
                 }
@@ -51,6 +52,7 @@ io.on('connection', function (socket) {
         for(var i = 0; i < game.players.length; i++){
             if(game.players[i].uid === uid){
                 game.players[i].socket = socket;
+                game.players[i].disconnecton=null;
                 //Als speler al in een spel was, laat kaarten weer zien.
                 update(game);
 
@@ -61,8 +63,12 @@ io.on('connection', function (socket) {
     });
 
     socket.on('disconnect', function () {
-
-    })
+        var player = getPlayer(socket.id);
+        if (player !== null) {
+            //unixtijd
+            player.disconnecton = Date.now();
+        }
+    });
 
     socket.on('tryStart', function() {
         //check aantal spelers en of het spel nog niet gestart is
@@ -101,14 +107,9 @@ io.on('connection', function (socket) {
             var pulledcard = pullCard(player);
             if (player.pakken>0) {
                 player.pakken--;
-                game.timer=100;
             }
             else {
                 player.canpull=false;
-            }
-            update(game);
-
-            if (player.pakken===0) {
                 //Als de trekstapel leeg is, wat naar mijn weten nog nooit is voorgekomen, verander beurt.
                 if (pulledcard !== null && kanOpleggen(player, pulledcard)) {
                     game.timer = 5;
@@ -116,9 +117,8 @@ io.on('connection', function (socket) {
                 else {
                     changeTurn(1);
                 }
-
-                update(game);
             }
+            update(game);
         }
     });
 
@@ -149,15 +149,10 @@ io.on('connection', function (socket) {
             }
         }
     });
-
-    socket.on("active", function(uid){
-        uids.push(uid);
-        console.log("UIDS: " + uids.length);
-    });
-
 });
 
 function pullCard(player) {
+    //Als de trekstapel op is, schut de aflegstapel behalve de bovenste van de aflegstapel, en leg ze op de trekstapel
     if (game.deck.length===0) {
         var newstash = game.stash.splice(game.stash.length-1,1);
         if (game.stash.length>0) {
@@ -200,8 +195,14 @@ function cardStringtoObj(card) {
 }
 
 function kanOpleggen(player, card) {
-    //Controleer of de speler wel aan de beurt is, en of hij niet een kleur moet kiezen
-    if (game.turn === player && player.choosesuit !== true) {
+    //Controleer of de speler wel aan de beurt is, of hij niet een kleur moet kiezen en of hij geen strafkaarten moet pakken
+    if (game.turn === player && player.choosesuit !== true && !player.pakken>0) {
+        if (player.cards.length===1 && (card.card==='Joker' || card.card==='2')) {
+            //Laatste kaart mag geen Joker of 2 zijn, pak 1 en ga volgende beurt
+            pullCard(player);
+            changeTurn(1);
+            return false;
+        }
         var topstash = game.stash[game.stash.length - 1];
 
         //Kijk of kaart of type overeenkomt. Joker mag overal op.
@@ -312,10 +313,17 @@ function startTurn() {
             if (game.turn.canpull && !game.turn.choosesuit) {
                 //Als de tijd om is en de speler heeft nog geen kaart gepakt, pak hem automatisch
                 pullCard(game.turn);
+                game.turn.canpull=false;
             }
             else if (game.turn.choosesuit) {
                 //kleur blijft hetzelfde als de speler treuzelt
                 game.turn.choosesuit=false;
+            }
+            //Als de speler nog pakken moest, maar daarmee treuzelde, pak ze automatisch
+            if (game.turn.pakken>0) {
+                for (var i=0; i<game.turn.pakken; i++) {
+                    pullCard(game.turn);
+                }
             }
             clearInterval(game.interval);
             changeTurn(1);
@@ -332,9 +340,35 @@ function getPlayer(socketid) {
             return game.players[i];
         }
     }
+    return null;
 }
 
 function update(g) {
+    for (var i=0; i<g.players.length; i++) {
+        var player = g.players[i];
+        if (player.disconnecton!==null) {
+            //Als spel gestart is
+            if (game.cards.length > 0) {
+                //Gooi speler uit gameobject na 20 seconden disconnect
+                if (Date.now() - player.disconnecton > 20000) {
+                    game.players.splice(game.players.indexOf(player));
+                }
+            }
+            else {
+                //5sec als spel niet gestart is
+                if (Date.now() - player.disconnecton > 5000) {
+                    game.players.splice(game.players.indexOf(player));
+                    //Geen spelers is spel stoppen
+                }
+            }
+        }
+    }
+
+    //Geen spelers is spel stoppen
+    if (game.players.length === 0) {
+        game.cards = [];
+    }
+
     //Stuur spelinfo naar alle spelers
     for (var i=0; i<g.players.length; i++) {
         var player = g.players[i];
