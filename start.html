@@ -40,6 +40,9 @@
                     });
                 }
             });
+            $("#rules").click(function () {
+                window.location.href = "/regels";
+            });
         });
     </script>
     <title>Pesten Online</title>
@@ -85,6 +88,7 @@
             <h2>Naam</h2>
             <input type="text" id="name" onkeyup="inputHelp()" maxlength="20" placeholder="Vul hier uw naam in"><br>
             <input type="button" id="enter" value="DEELNEMEN">
+            <input type="button" id="rules" value="SPELREGELS">
             <div id="message"></div>
         </section>
     </section>

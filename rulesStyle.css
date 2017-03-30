@@ -1,0 +1,14 @@
+@media only screen and (min-width: 768px){
+    body{
+        margin-left: 25%;
+        width: 50%;
+    }
+}
+@media only screen and (max-width: 768px){
+    h2{
+        text-align: center;
+    }
+    #back{
+        margin-left: 30%;
+    }
+}

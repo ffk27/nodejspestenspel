@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" type="text/css" href="rulesStyle.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <title>Pesten Online Spelregels</title>
+</head>
+<body>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#back").click(function(){
+                console.log("hoi");
+                window.location.href = '/';
+            });
+        });
+    </script>
+
+    <h1>Regels</h1>
+
+    <section>
+        <h2>Algemene regels</h2>
+        <ul>
+            <li>Spelers mogen alleen kaarten opleggen die overeenkomen in kleur, cijfer of suite van bovenste kaart van de leg stapel.</li>
+            <li>Als een speler geen kaart kan opleggen moet hij of zij kaarten van de trekstapel blijven trekken totdat hij of zij kan opleggen.</li>
+            <li>Jokers mogen op alle kaarten gelegd worden en vice versa.</li>
+            <li>Als de timer om is en de speler heeft nog geen actie gedaan, dan is de volgende speler aan de beurt.</li>
+        </ul>
+        <h2>Pestkaart regels</h2>
+        <ul>
+            <li>Als de speler een twee oplegt moet de volgende speler twee kaarten trekken, tenzij hij of zij een twee of een joker oplegt. De kaarten die dan getrokken
+            moeten worden worden opgeteld. Voorbeeld: Als een speler een twee oplegt en de volgende legt ook een twee op, dan moet de speler erna vier kaarten pakken.</li>
+            <li>Als de speler een joker oplegt dan moet de volgende speler vijf kaarten trekken.</li>
+            <li>Als de speler een boer opgooit mag hij de suite van de volgende kaart kiezen. Voorbeeld: speler legt schoppen boer op en kiest dan om de suite naar
+            harten te veranderen.</li>
+            <li>Als de speler een zeven oplegt mag hij hierna nog een kaart opleggen.</li>
+            <li>Als de speler een aas oplegt wordt de beurtvolgorde omgedraait.</li>
+        </ul>
+    </section>
+<input type="button" id="back" value="TERUG">
+</body>
+</html>
