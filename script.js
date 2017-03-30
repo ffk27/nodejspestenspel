@@ -87,6 +87,10 @@ $(document).ready(function () {
         socket.on('playerConnect', function (playerinfo) {
             showPlayerNames(playerinfo);
         });
+
+        socket.on("notEnoughPlayers", function () {
+            $("#gamemessage").hide().fadeIn().html("Er moeten minimaal twee spelers aanwezig zijn om een spel te kunnen starten").css("color", "#d11010").delay(2000).fadeOut();
+        })
     });
 
 

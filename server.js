@@ -58,7 +58,7 @@ io.on('connection', function (socket) {
     socket.on('tryStart', function() {
         //check aantal spelers en of het spel nog niet gestart is
         //...
-        if (game.players.length>0 && game.cards.length===0) {
+        if (game.players.length>1 && game.cards.length===0) {
             //nieuw Deck aanmaken
             fillCardArray();
 
@@ -78,6 +78,9 @@ io.on('connection', function (socket) {
                 startTurn();
                 update(game);
             }
+        }
+        else{
+            socket.emit("notEnoughPlayers");
         }
     });
 

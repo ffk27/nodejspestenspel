@@ -47,7 +47,7 @@
 <body>
 <script>
     function setMessage(message){
-        $("#message").html(message).css("color", "#d11010").delay(2000).fadeOut();
+        $("#message").fadeIn().html(message).css("color", "#d11010").delay(2000).fadeOut();
     }
 
     function isValidName(input){
@@ -56,6 +56,18 @@
             return true;
         }
         return false;
+    }
+
+    // Displays messages at every keyup when necessary
+    function inputHelp() {
+        var name = $("#name").val();
+
+        if(name !== "" && name.length < 3)
+            setMessage("Uw naam moet minmaal 3 karakters lang zijn");
+        else if(!isValidName(name))
+            setMessage("Uw naam mag geen speciale karakters bevatten");
+        else
+            setMessage("");
     }
 </script>
 
@@ -71,7 +83,7 @@
     <section id="startbox">
         <section id="signin">
             <h2>Naam</h2>
-            <input type="text" id="name" maxlength="20" placeholder="Vul hier uw naam in"><br>
+            <input type="text" id="name" onkeyup="inputHelp()" maxlength="20" placeholder="Vul hier uw naam in"><br>
             <input type="button" id="enter" value="DEELNEMEN">
             <div id="message"></div>
         </section>

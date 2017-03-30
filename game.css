@@ -62,7 +62,9 @@
     font-size: 150%;
 }
 
-
+#gamemessage{
+    display: inline-block;
+}
 
 @media only screen and (max-width: 768px) {
     #controls {
@@ -88,4 +90,5 @@
         width:80%;
     }
 }
+
 
