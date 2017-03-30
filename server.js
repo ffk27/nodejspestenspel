@@ -93,18 +93,26 @@ io.on('connection', function (socket) {
         //Controleer of de speler wel aan de beurt is.
         if (game.turn===player && game.turn.canpull) {
             var pulledcard = pullCard(player);
-            update(game);
-
-            player.canpull=false;
-
-            if (kanOpleggen(player,pulledcard)) {
-                game.timer=5;
+            if (player.pakken>0) {
+                player.pakken--;
+                game.timer=100;
             }
             else {
-                changeTurn(1);
+                player.canpull=false;
             }
             update(game);
 
+            if (player.pakken===0) {
+                //Als de trekstapel leeg is, wat naar mijn weten nog nooit is voorgekomen, verander beurt.
+                if (pulledcard !== null && kanOpleggen(player, pulledcard)) {
+                    game.timer = 5;
+                }
+                else {
+                    changeTurn(1);
+                }
+
+                update(game);
+            }
         }
     });
 
@@ -138,6 +146,17 @@ io.on('connection', function (socket) {
 });
 
 function pullCard(player) {
+    if (game.deck.length===0) {
+        var newstash = game.stash.splice(game.stash.length-1,1);
+        if (game.stash.length>0) {
+            game.deck = shuffle(game.stash);
+            game.stash = newstash;
+        }
+        else {
+            game.stash = newstash;
+            return null;
+        }
+    }
     var pulledcard = game.deck[game.deck.length-1];
     player.cards.push(pulledcard);
     game.deck.splice(game.deck.length-1,1);
@@ -202,6 +221,10 @@ function playerhascard(player,card) {
 function legop(player,card) {
     //leg op aflegstapel
     game.stash[game.stash.length]=card;
+    var pakken = game.turn.pakken;
+    if (pakken === undefined) {
+        pakken=0;
+    }
     //Verwijder kaart van spelerskaarten
     player.cards.splice(player.cards.indexOf(card),1);
     switch (card.card) {
@@ -211,8 +234,10 @@ function legop(player,card) {
             changeTurn(1);
             break;
         case '2':
+            game.turn.pakken=0;
             //pestkaart, 2 pakken voor de volgende
             changeTurn(1);
+            game.turn.pakken = pakken + 2;
             break;
         case '7':
             break;
@@ -223,8 +248,10 @@ function legop(player,card) {
             player.choosesuit=true;
             break;
         case 'Joker':
+            game.turn.pakken=0;
             //pestkaart, 5 pakken voor de volgende
             changeTurn(1);
+            game.turn.pakken = pakken + 5;
             break;
         default:
             changeTurn(1);
@@ -270,9 +297,13 @@ function startTurn() {
     game.interval = setInterval(function () {
         game.timer--;
         if (game.timer<0) {
-            if (game.turn.canpull) {
+            if (game.turn.canpull && !game.turn.choosesuit) {
                 //Als de tijd om is en de speler heeft nog geen kaart gepakt, pak hem automatisch
                 pullCard(game.turn);
+            }
+            else if (game.turn.choosesuit) {
+                //kleur blijft hetzelfde als de speler treuzelt
+                game.turn.choosesuit=false;
             }
             clearInterval(game.interval);
             changeTurn(1);
@@ -297,7 +328,7 @@ function update(g) {
         var player = g.players[i];
         if (g.cards.length>0) {
             var playerlist = getPlayerList(player);
-            var info = {'playercards':player.cards, 'topstash': g.stash[g.stash.length-1], 'playersinfo': playerlist, 'suit': g.suit, 'timer': g.timer };
+            var info = {'playercards':player.cards, 'topstash': g.stash[g.stash.length-1], 'playersinfo': playerlist, 'suit': g.suit, 'timer': g.timer, 'pakken': player.pakken };
             if (player.choosesuit===true) {
                 info.choosesuit=true;
             }

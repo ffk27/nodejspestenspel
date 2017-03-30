@@ -153,6 +153,12 @@ function displayCards(game) {
         var marginleft = "25px";
     }
 
+    if (game.pakken>1) {
+        $('#pakken').html('Pak ' + game.pakken + ' kaarten');
+    }
+    else {
+        $('#pakken').html('');
+    }
 
     for(var i = 0; i < playercards.length; i++){
 
