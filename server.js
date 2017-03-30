@@ -22,6 +22,7 @@ app.get('/script.js', function(req,res){res.sendFile(path.join(__dirname+'/scrip
 //Link Images
 app.use('/img', express.static('img'));
 app.get('/FichtlsLied.mp3', function(req,res){res.sendFile(path.join(__dirname+'/FichtlsLied.mp3'));});
+app.get('/horse.mp3', function(req,res){res.sendFile(path.join(__dirname+'/horse.mp3'));});
 
 io.on('connection', function (socket) {
     socket.on('player', function (data) {
@@ -140,6 +141,11 @@ function pullCard(player) {
     game.deck.splice(game.deck.length-1,1);
     var topstash = game.stash[game.stash.length-1];
     return pulledcard;
+}
+
+function broadcastHorse() {
+    //Speel bij iedereen paard af.
+    io.emit('playHorse');
 }
 
 function cardStringtoObj(card) {
@@ -271,6 +277,8 @@ function startTurn() {
             update(game);
         }
     },1000);
+
+    broadcastHorse();
 }
 
 function getPlayer(socketid) {

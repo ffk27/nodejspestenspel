@@ -62,6 +62,11 @@ $(document).ready(function () {
             window.location.href = '/';
         }
 
+        socket.on('playHorse', function () {
+            var audio = new Audio('horse.mp3');
+            audio.play();
+        });
+
         socket.on('entername', function () {
             window.location.href = '/';
         });
