@@ -15,10 +15,12 @@ server.listen(port);
 //Link HTML pages
 app.get('/', function(req,res){res.sendFile(__dirname + '/start.html');});
 app.get('/game', function(req,res){res.sendFile(path.join(__dirname+'/index.html'));});
+app.get('/regels', function(req,res){res.sendFile(path.join(__dirname+'/rules.html'));});
 //Link CSS files
 app.get('/style.css', function(req,res){res.sendFile(path.join(__dirname+'/style.css'));});
 app.get('/game.css', function(req,res){res.sendFile(path.join(__dirname+'/game.css'));});
 app.get('/startscreen.css', function(req,res){res.sendFile(path.join(__dirname+'/startscreen.css'));});
+app.get('/rulesStyle.css', function(req,res){res.sendFile(path.join(__dirname+'/rulesStyle.css'));});
 //Link JS files
 app.get('/script.js', function(req,res){res.sendFile(path.join(__dirname+'/script.js'));});
 //Link Images
