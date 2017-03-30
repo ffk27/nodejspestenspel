@@ -55,6 +55,7 @@ input[type="button"]{
     transition: all 0.25s ease;
     font-size: 14px;
     margin-top: 10px;
+    outline:none;
 }
 
 input[type="button"]:hover{

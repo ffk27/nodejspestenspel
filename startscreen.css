@@ -40,7 +40,8 @@
 }
 
 #name:hover{
-    background: #ffc67c;
+    background: #bcf4ee;
+    border-color: #bcf4ee;
 }
 @media only screen and (max-width: 768px) {
     #startbox {

@@ -121,21 +121,26 @@ window.mobileAndTabletcheck = function() {
 
 function displayCards(game) {
     var playercards = game.playercards;
-
+    $("#startgamebutton").hide();
     var s='';
-    switch(game.suit) {
-        case 'H':
-            s='♥';
-            break;
-        case 'D':
-            s='♦';
-            break;
-        case 'S':
-            s='♠';
-            break;
-        case 'C':
-            s='♣';
-            break;
+    if (game.topstash.card === "Joker"){
+        s = '♥|♦|♠|♣';
+    }
+    else {
+        switch (game.suit) {
+            case 'H':
+                s = '♥';
+                break;
+            case 'D':
+                s = '♦';
+                break;
+            case 'S':
+                s = '♠';
+                break;
+            case 'C':
+                s = '♣';
+                break;
+        }
     }
     $('#suit').html(s);
 

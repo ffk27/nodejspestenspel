@@ -41,6 +41,10 @@
     border: 2px solid black;
 }
 
+#suit{
+    font-size: 200%;
+}
+
 #suits {
     text-align: center;
     display: none;

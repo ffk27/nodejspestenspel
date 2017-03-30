@@ -5,8 +5,10 @@ var port = 8000;
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
+var uids = [];
 var suits = ['H','D','S','C']; //Kaartkleuren harten(H), ruiten(D), schoppen(S), klaver(C)
 var game = { 'cards': [], 'deck': [], 'stash': [], 'players': [], 'clockwise': true, 'turn': null};
+var playercount = 0;
 
 server.listen(port);
 
@@ -58,6 +60,10 @@ io.on('connection', function (socket) {
         socket.emit('entername');
     });
 
+    socket.on('disconnect', function () {
+
+    })
+
     socket.on('tryStart', function() {
         //check aantal spelers en of het spel nog niet gestart is
         //...
@@ -66,7 +72,7 @@ io.on('connection', function (socket) {
             fillCardArray();
 
             //Kaarten schudden
-            game.cards = shuffle(game.cards);
+            game.cards = shuffleCards(game.cards);
 
             //kaarten verdelen
             distributeCards();
@@ -143,13 +149,19 @@ io.on('connection', function (socket) {
             }
         }
     });
+
+    socket.on("active", function(uid){
+        uids.push(uid);
+        console.log("UIDS: " + uids.length);
+    });
+
 });
 
 function pullCard(player) {
     if (game.deck.length===0) {
         var newstash = game.stash.splice(game.stash.length-1,1);
         if (game.stash.length>0) {
-            game.deck = shuffle(game.stash);
+            game.deck = shuffleCards(game.stash);
             game.stash = newstash;
         }
         else {
@@ -385,15 +397,15 @@ function fillCardArray() {
     game.cards.push({'card': 'Joker', 'type': '2'});
 }
 
-function shuffle(cards) {
-    var currentIndex = cards.length, temporaryValue, randomIndex;
+function shuffleCards(cards) {
+    var currIndex = cards.length, tempVal, ranIndex;
 
-    while (0 != currentIndex) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-        temporaryValue = cards[currentIndex];
-        cards[currentIndex] = cards[randomIndex];
-        cards[randomIndex] = temporaryValue;
+    while (0 != currIndex) {
+        ranIndex = Math.floor(Math.random() * currIndex);
+        currIndex -= 1;
+        tempVal = cards[currIndex];
+        cards[currIndex] = cards[ranIndex];
+        cards[ranIndex] = tempVal;
     }
 
     return cards;
