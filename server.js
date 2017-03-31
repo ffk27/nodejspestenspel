@@ -40,7 +40,7 @@ io.on('connection', function (socket) {
                     socket.emit("gameStarted");
                 else {
                     var uid = Math.random().toString(22);
-                    var player = {'name': data, 'uid': uid, 'socket': socket, 'cards': [], 'disconnecton': null, 'pakken': 0, 'gepakt': 0 };
+                    var player = {'name': data, 'uid': uid, 'socket': socket, 'cards': [], 'disconnecton': null, 'pakken': 0, 'gepakt': 0, 'pulledcard': null };
                     game.players.push(player);
                     socket.emit('canConnect', uid);
                 }
@@ -112,8 +112,9 @@ io.on('connection', function (socket) {
             }
             else {
                 player.canpull=false;
-                //Als de trekstapel leeg is, wat naar mijn weten nog nooit is voorgekomen, verander beurt.
                 if (pulledcard !== null && kanOpleggen(player, pulledcard)) {
+                    //onthoud deze kaart, want alleen deze mag opgegooid worden.
+                    player.pulledcard=pulledcard;
                     game.timer = 5;
                 }
                 else {
@@ -198,7 +199,11 @@ function cardStringtoObj(card) {
 
 function kanOpleggen(player, card) {
     //Controleer of de speler wel aan de beurt is, of hij niet een kleur moet kiezen en of hij geen strafkaarten moet pakken
-    if (game.turn === player && player.choosesuit !== true && !(player.pakken-player.gepakt)>0) {
+    //En als een kaart getrokken is mag alleen deze opgegooid worden.
+    if (game.turn === player && player.choosesuit !== true && !(player.pakken-player.gepakt)>0 && ((player.pulledcard!==null && player.pulledcard===card) || player.pulledcard===null)) {
+        if (player.pulledcard!==null) {
+            player.pulledcard=null;
+        }
         if (player.cards.length===1 && (card.card==='Joker' || card.card==='2')) {
             //Laatste kaart mag geen Joker of 2 zijn, pak 1 en ga volgende beurt
             pullCard(player);
@@ -324,6 +329,9 @@ function startTurn() {
     game.interval = setInterval(function () {
         game.timer--;
         if (game.timer<0) {
+            if (game.pulledcard!==null) {
+                game.pulledcard=null;
+            }
             if (game.turn.canpull && !game.turn.choosesuit) {
                 //Als de tijd om is en de speler heeft nog geen kaart gepakt, pak hem automatisch
                 pullCard(game.turn);
