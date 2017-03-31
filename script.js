@@ -126,7 +126,15 @@ window.mobileAndTabletcheck = function() {
 };
 
 function displayCards(game) {
-    var playercards = game.playercards;
+    var player = null;
+    for (var i=0; i<game.playersinfo.length; i++) {
+        if (game.playersinfo[i].you===true) {
+            player=game.playersinfo[i];
+            break;
+        }
+    }
+    var playercards = player.playercards;
+
     if (game.timer===null) {
         $("#startgamebutton").show();
     }
@@ -169,8 +177,8 @@ function displayCards(game) {
         var marginleft = "25px";
     }
 
-    if (game.pakken>0) {
-        $('#pakken').html('Pak ' + game.pakken + ' kaarten of gooi een Joker/2 op.');
+    if (player.pakken>0) {
+        $('#pakken').html('Pak ' + player.pakken + ' kaarten of gooi een Joker/2 op.');
     }
     else {
         $('#pakken').html('');
@@ -263,7 +271,7 @@ function showPlayerNames(game){
         }
 
         if (player.turn===true) {
-            if (player.clockwise === true) {
+            if (game.clockwise === true) {
                 playersinfo += ' ⇓';
             }
             else {

@@ -7,7 +7,7 @@ var io = require('socket.io')(server);
 
 var uids = [];
 var suits = ['H','D','S','C']; //Kaartkleuren harten(H), ruiten(D), schoppen(S), klaver(C)
-var game = { 'cards': [], 'deck': [], 'stash': [], 'players': [], 'clockwise': true, 'turn': null};
+var game = { 'cards': [], 'deck': [], 'stash': [], 'players': [], 'clockwise': true, 'turn': null, 'timer': null};
 var playercount = 0;
 
 server.listen(port);
@@ -30,7 +30,7 @@ app.get('/FichtlsLied.mp3', function(req,res){res.sendFile(path.join(__dirname+'
 app.get('/biem.mp3', function(req,res){res.sendFile(path.join(__dirname+'/biem.mp3'));});
 app.get('/horse.mp3', function(req,res){res.sendFile(path.join(__dirname+'/horse.mp3'));});
 
-//controleer elke 5 seconden of een speler nog verbonden is.
+//controleer elke seconde of een speler nog verbonden is.
 checkPlayers(game);
 
 io.on('connection', function (socket) {
@@ -43,7 +43,7 @@ io.on('connection', function (socket) {
                     socket.emit("gameStarted");
                 else {
                     var uid = Math.random().toString(22);
-                    var player = {'name': data, 'uid': uid, 'socket': socket, 'cards': [], 'disconnecton': null, 'pakken': 0, 'gepakt': 0, 'pulledcard': null, 'timer': null, 'gewonnen': false };
+                    var player = {'name': data, 'uid': uid, 'socket': socket, 'cards': [], 'disconnecton': null, 'pakken': 0, 'gepakt': 0, 'pulledcard': null, 'gewonnen': false };
                     game.players.push(player);
                     socket.emit('canConnect', uid);
                 }
@@ -273,6 +273,7 @@ function legop(player,card) {
     player.cards.splice(player.cards.indexOf(card),1);
     if (player.cards.length===0) {
         //Gewonnen
+        player.gewonnen = true;
         stopGame(player);
     }
     else {
@@ -315,9 +316,6 @@ function stopGame(player) {
     clearInterval(game.interval);
     game.timer=null;
     game.cards=[];
-    if (player !== null) { //Als het gestop is door gewin.
-        player.gewonnen = true;
-    }
     update(game);
 }
 
@@ -418,14 +416,14 @@ function checkPlayers(g) {
                     }
                 }
                 else {
-                    //5sec als spel niet gestart is
-                    if (Date.now() - player.disconnecton > 5000) {
+                    //2sec als spel niet gestart is
+                    if (Date.now() - player.disconnecton > 2000) {
                         removePlayer(player);
                     }
                 }
             }
         }
-    },5000);
+    },1000);
 }
 
 function removePlayer(player) {
@@ -446,7 +444,7 @@ function update(g) {
     for (var i=0; i<g.players.length; i++) {
         var player = g.players[i];
         var playerlist = getPlayerList(player);
-        var info = {'playercards':player.cards, 'topstash': g.stash[g.stash.length-1], 'playersinfo': playerlist, 'suit': g.suit, 'timer': g.timer, 'pakken': player.pakken-player.gepakt, 'gewonnen': player.gewonnen };
+        var info = {'topstash': g.stash[g.stash.length-1], 'playersinfo': playerlist, 'suit': g.suit, 'timer': g.timer, 'clockwise': game.clockwise };
         if (player.choosesuit===true) {
             info.choosesuit=true;
         }
@@ -458,8 +456,14 @@ function getPlayerList(player) {
     var playerlist = [];
     for (var i2=0; i2<game.players.length; i2++) {
         var name = game.players[i2].name;
-        var info = {'name': name, 'cardcount': game.players[i2].cards.length, 'clockwise': game.clockwise };
-        if (game.players[i2]===player) { info.you=true; }
+        var info = {'name': name, 'cardcount': game.players[i2].cards.length, 'gewonnen': player.gewonnen, 'pakken': player.pakken-player.gepakt };
+        if (game.players[i2]===player) {
+            info.you=true;
+            info.playercards=player.cards
+        }
+        else {
+            info.you=false;
+        }
         if (game.turn===game.players[i2]) { info.turn=true; }
         playerlist.push(info);
     }
@@ -468,7 +472,7 @@ function getPlayerList(player) {
 
 function distributeCards () {
     var cardsPos = 0;
-    var handSize = 2;
+    var handSize = 1;
 
     // kaarten verdelen onder spelers
     for (var i = 0; i < game.players.length; i++) {
