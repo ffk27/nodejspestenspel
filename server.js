@@ -40,7 +40,7 @@ io.on('connection', function (socket) {
                     socket.emit("gameStarted");
                 else {
                     var uid = Math.random().toString(22);
-                    var player = {'name': data, 'uid': uid, 'socket': socket, 'cards': [], 'disconnecton': null, 'pakken': 0, 'gepakt': 0, 'pulledcard': null };
+                    var player = {'name': data, 'uid': uid, 'socket': socket, 'cards': [], 'disconnecton': null, 'pakken': 0, 'gepakt': 0, 'pulledcard': null, 'timer': null };
                     game.players.push(player);
                     socket.emit('canConnect', uid);
                 }
@@ -229,6 +229,16 @@ function kanOpleggen(player, card) {
             return true;
         }
     }
+    else {
+        if (game.turn===player) {
+            console.log(card);
+            console.log(player.pakken);
+            console.log(player.gepakt);
+            console.log(player.pulledcard);
+            console.log(game.stash[game.stash.length - 1]);
+            console.log(game.suit);
+        }
+    }
     return false;
 }
 
@@ -294,6 +304,7 @@ function legop(player,card) {
 
 function stopGame() {
     clearInterval(game.interval);
+    game.timer=null;
     game.cards=[];
     update(game);
 }
@@ -329,7 +340,7 @@ function changeTurn(num) {
 function startTurn() {
     clearInterval(game.interval);
 
-    var timer = 10;
+    var timer = 30;
     //Bij pestkaarten krijgt de volgende speler extra tijd om na te denken, dit kan verder uitgewerkt worden in de toekomst.
     if (game.stash[game.stash.length-1].card==='Joker' || game.stash[game.stash.length-1].card==='2') {
         timer=timer*2;
@@ -385,6 +396,11 @@ function update(g) {
             if (game.cards.length > 0) {
                 //Gooi speler uit gameobject na 20 seconden disconnect
                 if (Date.now() - player.disconnecton > 20000) {
+                    for (var c=0; c<player.cards.length; c++) {
+                        //voeg alle kaarten van speler toe aan trekstapel
+                        game.deck.push(player.cards[c]);
+                    }
+                    //Verwijder speler
                     game.players.splice(game.players.indexOf(player));
                 }
             }
@@ -404,6 +420,7 @@ function update(g) {
     }
 
     //Stuur spelinfo naar alle spelers
+    /*
     for (var i=0; i<g.players.length; i++) {
         var player = g.players[i];
         if (g.cards.length>0) {
@@ -415,8 +432,18 @@ function update(g) {
             player.socket.emit('update', info);
         }
         else {
-            player.socket.emit('playerConnect',getPlayerList(player));
+            player.socket.emit('playerConnect',{'topstash': null, 'playersinfo': getPlayerList(player)});
         }
+    }
+    */
+    for (var i=0; i<g.players.length; i++) {
+        var player = g.players[i];
+        var playerlist = getPlayerList(player);
+        var info = {'playercards':player.cards, 'topstash': g.stash[g.stash.length-1], 'playersinfo': playerlist, 'suit': g.suit, 'timer': g.timer, 'pakken': player.pakken-player.gepakt };
+        if (player.choosesuit===true) {
+            info.choosesuit=true;
+        }
+        player.socket.emit('update', info);
     }
 }
 

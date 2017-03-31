@@ -39,7 +39,6 @@ function setTimer(sec) {
 function drop(ev) {
     ev.preventDefault();
     var data = ev.dataTransfer.getData("card");
-    console.log(data);
     socket.emit('legop', data);
     socket.on('magopleggen', function(data) {
         $('#'+data).hide();
@@ -85,21 +84,28 @@ $(document).ready(function () {
 
         socket.on('update', function (game) {
             clearInterval(timer);
-            setTimer(game.timer);
-            displayCards(game);
+            if (game.timer!==null) {
+                setTimer(game.timer);
+            }
+            else {
+                $('#timer').html('');
+            }
+            if (game.topstash !== undefined) {
+                displayCards(game);
+            }
             if (game.choosesuit===true) {
                 $('#suits').show();
             }
             else {
                 $('#suits').hide();
             }
-            showPlayerNames(game.playersinfo);
+            showPlayerNames(game);
         });
-
-        socket.on('playerConnect', function (playerinfo) {
-            showPlayerNames(playerinfo);
+/*
+        socket.on('playerConnect', function (game) {
+            showPlayerNames(game);
         });
-
+*/
         socket.on("notEnoughPlayers", function () {
             $("#gamemessage").hide().fadeIn().html("Er moeten minimaal twee spelers aanwezig zijn om een spel te kunnen starten").css("color", "#d11010").delay(2000).fadeOut();
         })
@@ -201,7 +207,6 @@ function DoubleClicked_Card(ev, id) {
 var touchtime_stapel = 0;
 
 function DoubleClicked_Stapel(ev) {
-    console.log("stapel");
     if(touchtime_stapel == 0) {//eerste klik
         touchtime_stapel = new Date().getTime();
     } else {
@@ -218,7 +223,8 @@ function DoubleClicked_Stapel(ev) {
     }
 }
 
-function showPlayerNames(players){
+function showPlayerNames(game){
+    var players = game.playersinfo;
     var playersinfo = '';
 
     for (var i=0; i<players.length; i++) {
@@ -241,7 +247,17 @@ function showPlayerNames(players){
         if (player.you===true) {
             playersinfo+=' (Jij)';
         }
-        playersinfo+=' kaarten: ' + player.cardcount;
+
+        if (player.cardcount>1) {
+            playersinfo+=' kaarten: ' + player.cardcount;
+        }
+        else if (player.cardcount===1) {
+            playersinfo+=' LAATSTE KAART!';
+        }
+        else if (game.topstash !== undefined) {
+            playersinfo+=' Gewonnen!';
+        }
+
         if (player.turn===true) {
             if (player.clockwise === true) {
                 playersinfo += ' ⇓';
