@@ -28,7 +28,7 @@ function setTimer(sec) {
         sec--;
         if(sec < 5) {
             $("#timer").css({"color": "#d11010", "font-size": "150%"});
-            // new Audio('biem.mp3').play(); // Plays the countdown sound
+            new Audio('biem.mp3').play(); // Plays the countdown sound
         }
         else
             $("#timer").css({"color": "white", "font-size": "100%"});
@@ -58,7 +58,7 @@ $(document).ready(function () {
             audio.play();
         });
 
-        //audio.play();
+        audio.play();
 
         var uid = sessionStorage.getItem("uid");
 
@@ -71,7 +71,7 @@ $(document).ready(function () {
 
         socket.on('playHorse', function () {
             var audio = new Audio('horse.mp3');
-            //audio.play();
+            audio.play();
         });
 
         socket.on('entername', function () {
