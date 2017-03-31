@@ -25,11 +25,13 @@
     margin-left:25px;
     z-index:999;
 }
-#playercards .card:hover {
-    width: 122px;
-    height: 179px;
-}
 
+@media only screen and (min-width: 768px) {
+    #playercards .card:hover {
+        width: 122px;
+        height: 179px;
+    }
+}
 #trekstapel{
     /*float: left;*/
 }

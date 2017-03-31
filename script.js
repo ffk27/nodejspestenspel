@@ -28,7 +28,7 @@ function setTimer(sec) {
         sec--;
         if(sec < 5) {
             $("#timer").css({"color": "#d11010", "font-size": "150%"});
-            new Audio('biem.mp3').play(); // Plays the countdown sound
+            // new Audio('biem.mp3').play(); // Plays the countdown sound
         }
         else
             $("#timer").css({"color": "white", "font-size": "100%"});
@@ -39,6 +39,7 @@ function setTimer(sec) {
 function drop(ev) {
     ev.preventDefault();
     var data = ev.dataTransfer.getData("card");
+    console.log(data);
     socket.emit('legop', data);
     socket.on('magopleggen', function(data) {
         $('#'+data).hide();
@@ -57,7 +58,7 @@ $(document).ready(function () {
             audio.play();
         });
 
-        audio.play();
+        //audio.play();
 
         var uid = sessionStorage.getItem("uid");
 
@@ -70,7 +71,7 @@ $(document).ready(function () {
 
         socket.on('playHorse', function () {
             var audio = new Audio('horse.mp3');
-            audio.play();
+            //audio.play();
         });
 
         socket.on('entername', function () {
@@ -144,7 +145,7 @@ function displayCards(game) {
     }
     $('#suit').html(s);
 
-    $('#trekstapel').html('<img draggable="true" ondragstart="pull(event)" src="/img/cards-svg/back.svg" class="card"/>');
+    $('#trekstapel').html('<img onclick="DoubleClicked_Stapel(event)" draggable="true" ondragstart="pull(event)" src="/img/cards-svg/back.svg" class="card"/>');
 
     $('#aflegstapel').html(
         '<img class="card" id="'+game.topstash.card+game.topstash.type+'" draggable="true" ondragstart="drag(event)" ' +
@@ -167,11 +168,54 @@ function displayCards(game) {
 
     for(var i = 0; i < playercards.length; i++){
 
-        cardshtml += '<div style="float:left;width:1px;margin-left:'+marginleft+';float:left;"><img class="card" id="'+playercards[i].card+playercards[i].type+'" draggable="true" ondragstart="drag(event)" ' +
+        cardshtml += '<div style="float:left;width:1px;margin-left:'+marginleft+';float:left;"><img class="card" id="'+playercards[i].card+playercards[i].type+'" onclick="DoubleClicked_Card(event, '+"'"+playercards[i].card+playercards[i].type+"'"+')" draggable="true" ondragstart="drag(event)" ' +
             'src="img/cards-svg/'+playercards[i].card+playercards[i].type+'.svg" /></div>'
     }
 
     $("#playercards").html(cardshtml);
+}
+
+var touchtime_card = 0;
+
+function DoubleClicked_Card(ev, id) {
+    if(touchtime_card == 0) {//eerste klik
+        touchtime_card = new Date().getTime();
+    } else {
+        //kijken of tweede klik snel genoeg na eerste is
+        if(((new Date().getTime())-touchtime_card) < 800) {
+            //kaart opleggen
+            ev.preventDefault();
+            var data = id;
+            socket.emit('legop', data);
+            socket.on('magopleggen', function(data) {
+                $('#'+data).hide();
+            });
+
+            touchtime_card = 0;
+        } else {
+            //niet snel genoeg na vorige klik dus is nieuwe eerste klik
+            touchtime_card = new Date().getTime();
+        }
+    }
+}
+var touchtime_stapel = 0;
+
+function DoubleClicked_Stapel(ev) {
+    console.log("stapel");
+    if(touchtime_stapel == 0) {//eerste klik
+        touchtime_stapel = new Date().getTime();
+    } else {
+        //kijken of tweede klik snel genoeg na eerste is
+        if(((new Date().getTime())-touchtime_stapel) < 800) {
+            //kaart trekken
+            socket.emit('pull');
+
+            touchtime_stapel = 0;
+        } else {
+            //niet snel genoeg na vorige klik dus is nieuwe eerste klik
+            touchtime_stapel = new Date().getTime();
+        }
+    }
 }
 
 function showPlayerNames(players){
