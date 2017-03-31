@@ -16,6 +16,7 @@ server.listen(port);
 app.get('/', function(req,res){res.sendFile(__dirname + '/start.html');});
 app.get('/game', function(req,res){res.sendFile(path.join(__dirname+'/index.html'));});
 app.get('/regels', function(req,res){res.sendFile(path.join(__dirname+'/rules.html'));});
+app.get('/testtabel', function(req,res){res.sendFile(path.join(__dirname+'/testtabel.html'));});
 //Link CSS files
 app.get('/style.css', function(req,res){res.sendFile(path.join(__dirname+'/style.css'));});
 app.get('/game.css', function(req,res){res.sendFile(path.join(__dirname+'/game.css'));});

@@ -1,7 +1,8 @@
 @media only screen and (min-width: 768px){
     body{
-        margin-left: 25%;
-        width: 50%;
+        margin:0 auto;
+        width: 100%;
+        max-width:980px;
     }
 }
 @media only screen and (max-width: 768px){
@@ -12,3 +13,10 @@
         margin-left: 30%;
     }
 }
+
+
+.green{background-color:green;color:white;}
+.rredd{background-color:red;}
+table{background-color:white;color:black;border-collapse: collapse;border-spacing: 0;border:1px solid black;}
+table td {border:1px solid black;padding:2px 4px;}
+table th {border:1px solid black;padding:2px 4px;}
