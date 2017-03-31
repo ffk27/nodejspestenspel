@@ -228,7 +228,7 @@ function kanOpleggen(player, card) {
             return true;
         }
     }
-    else if (player.pakken>0 && player.gepakt===0) {
+    else if (player.cards.length>1 && player.pakken>0 && player.gepakt===0) {
         if (player.pulledcard!==null) {
             player.pulledcard=null;
         }
@@ -237,7 +237,11 @@ function kanOpleggen(player, card) {
             return true;
         }
     }
+    else if (player.cards.length===1 && player.pakken>0 && player.gepakt===0) {
+        return false;
+    }
     else {
+
         if (game.turn===player) {
             console.log(card);
             console.log(player.pakken);
@@ -473,7 +477,7 @@ function getPlayerList(player) {
 
 function distributeCards () {
     var cardsPos = 0;
-    var handSize = 1;
+    var handSize = 2;
 
     // kaarten verdelen onder spelers
     for (var i = 0; i < game.players.length; i++) {
@@ -497,14 +501,26 @@ function distributeCards () {
 }
 
 function fillCardArray() {
+    /*
     var cs = ['2','3','4','5','6','7','8','9','10','J','Q','K','A']; //boer(J), vrouw(Q), heer(K), aas(A)
     for (var i=0; i < cs.length; i++) {
         for (var i2=0; i2<suits.length; i2++) {
             game.cards.push({'card': cs[i], 'type': suits[i2]});
         }
     }
+    */
     game.cards.push({'card': 'Joker', 'type': '1'});
     game.cards.push({'card': 'Joker', 'type': '2'});
+    game.cards.push({'card': 'Joker', 'type': '1'});
+    game.cards.push({'card': 'Joker', 'type': '2'});    game.cards.push({'card': 'Joker', 'type': '1'});
+    game.cards.push({'card': 'Joker', 'type': '2'});    game.cards.push({'card': 'Joker', 'type': '1'});
+    game.cards.push({'card': 'Joker', 'type': '2'});
+    game.cards.push({'card': '2', 'type': 'C'});
+    game.cards.push({'card': '2', 'type': 'C'});
+    game.cards.push({'card': '2', 'type': 'C'});
+    game.cards.push({'card': '2', 'type': 'C'});
+    game.cards.push({'card': '2', 'type': 'C'});
+
 }
 
 function shuffleCards(cards) {

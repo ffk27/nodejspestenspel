@@ -88,6 +88,8 @@ $(document).ready(function () {
             }
             else {
                 $('#timer').html('');
+                $('#startgamebutton').show();
+                $('#controls').show();
             }
             if (game.topstash !== undefined) {
                 displayCards(game);
