@@ -43,7 +43,7 @@ io.on('connection', function (socket) {
                     socket.emit("gameStarted");
                 else {
                     var uid = Math.random().toString(22);
-                    var player = {'name': data, 'uid': uid, 'socket': socket, 'cards': [], 'disconnecton': null, 'pakken': 0, 'gepakt': 0, 'pulledcard': null, 'timer': null };
+                    var player = {'name': data, 'uid': uid, 'socket': socket, 'cards': [], 'disconnecton': null, 'pakken': 0, 'gepakt': 0, 'pulledcard': null, 'timer': null, 'gewonnen': false };
                     game.players.push(player);
                     socket.emit('canConnect', uid);
                 }
@@ -94,6 +94,7 @@ io.on('connection', function (socket) {
 
             for (var i=0; i<game.players.length; i++) {
                 var player = game.players[i];
+                player.gewonnen=false;
                 player.socket.emit('gameStart');
                 startTurn();
                 update(game);
@@ -272,7 +273,7 @@ function legop(player,card) {
     player.cards.splice(player.cards.indexOf(card),1);
     if (player.cards.length===0) {
         //Gewonnen
-        stopGame();
+        stopGame(player);
     }
     else {
         switch (card.card) {
@@ -310,10 +311,13 @@ function legop(player,card) {
     }
 }
 
-function stopGame() {
+function stopGame(player) {
     clearInterval(game.interval);
     game.timer=null;
     game.cards=[];
+    if (player !== null) { //Als het gestop is door gewin.
+        player.gewonnen = true;
+    }
     update(game);
 }
 
@@ -432,7 +436,7 @@ function removePlayer(player) {
     //Geen spelers is spel stoppen
     if (game.players.length === 0) {
         game.cards = [];
-        stopGame();
+        stopGame(null);
     }
     update(game);
 }
@@ -442,7 +446,7 @@ function update(g) {
     for (var i=0; i<g.players.length; i++) {
         var player = g.players[i];
         var playerlist = getPlayerList(player);
-        var info = {'playercards':player.cards, 'topstash': g.stash[g.stash.length-1], 'playersinfo': playerlist, 'suit': g.suit, 'timer': g.timer, 'pakken': player.pakken-player.gepakt };
+        var info = {'playercards':player.cards, 'topstash': g.stash[g.stash.length-1], 'playersinfo': playerlist, 'suit': g.suit, 'timer': g.timer, 'pakken': player.pakken-player.gepakt, 'gewonnen': player.gewonnen };
         if (player.choosesuit===true) {
             info.choosesuit=true;
         }

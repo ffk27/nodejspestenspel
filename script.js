@@ -258,7 +258,7 @@ function showPlayerNames(game){
         else if (player.cardcount===1) {
             playersinfo+=' LAATSTE KAART!';
         }
-        else if (game.topstash !== undefined) {
+        else if (player.gewonnen===true) {
             playersinfo+=' Gewonnen!';
         }
 
