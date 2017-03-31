@@ -40,7 +40,7 @@ io.on('connection', function (socket) {
                     socket.emit("gameStarted");
                 else {
                     var uid = Math.random().toString(22);
-                    var player = {'name': data, 'uid': uid, 'socket': socket, 'cards': [], 'disconnecton': null };
+                    var player = {'name': data, 'uid': uid, 'socket': socket, 'cards': [], 'disconnecton': null, 'pakken': 0, 'gepakt': 0 };
                     game.players.push(player);
                     socket.emit('canConnect', uid);
                 }
@@ -107,8 +107,8 @@ io.on('connection', function (socket) {
         //Controleer of de speler wel aan de beurt is.
         if (game.turn===player && game.turn.canpull) {
             var pulledcard = pullCard(player);
-            if (player.pakken>0) {
-                player.pakken--;
+            if (player.pakken-player.gepakt>0) {
+                player.gepakt++;
             }
             else {
                 player.canpull=false;
@@ -198,7 +198,7 @@ function cardStringtoObj(card) {
 
 function kanOpleggen(player, card) {
     //Controleer of de speler wel aan de beurt is, of hij niet een kleur moet kiezen en of hij geen strafkaarten moet pakken
-    if (game.turn === player && player.choosesuit !== true && !player.pakken>0) {
+    if (game.turn === player && player.choosesuit !== true && !(player.pakken-player.gepakt)>0) {
         if (player.cards.length===1 && (card.card==='Joker' || card.card==='2')) {
             //Laatste kaart mag geen Joker of 2 zijn, pak 1 en ga volgende beurt
             pullCard(player);
@@ -211,10 +211,16 @@ function kanOpleggen(player, card) {
         if (card.card === 'Joker') {
             return true;
         }
-        else if (topstash.card === 'J' && game.suit === card.type) {
+        else if (topstash.card === 'J' && game.suit === card.type) { //overbodig
             return true;
         }
         else if (card.card === topstash.card || card.type === topstash.type || topstash.card === 'Joker') {
+            return true;
+        }
+    }
+    else if (player.pakken>0 && player.gepakt===0) {
+        //Als de vorige speler een joker of 2 opgelegd heeft, mag de speler er meteen een joker of 2 achteraan gooien.
+        if (card.card === 'Joker' || card.card === '2') {
             return true;
         }
     }
@@ -237,7 +243,8 @@ function legop(player,card) {
     //leg op aflegstapel
     game.stash[game.stash.length]=card;
     var pakken = game.turn.pakken;
-    if (pakken === undefined) {
+    //Alles gepakt, strafkaarten gaan niet verder
+    if (pakken===game.turn.gepakt) {
         pakken=0;
     }
     //Verwijder kaart van spelerskaarten
@@ -277,6 +284,11 @@ function legop(player,card) {
 }
 
 function changeTurn(num) {
+    //Alles gepakt.
+    if ((game.turn.pakken>0 && game.turn.pakken-game.turn.gepakt===0) || (game.turn.pakken===0 && game.turn.gepakt!==0)) {
+        game.turn.pakken=0;
+        game.turn.gepakt=0;
+    }
     if (game.players.length>1) {
         var playerindex = game.players.indexOf(game.turn);
         if (!game.clockwise) {
@@ -322,9 +334,11 @@ function startTurn() {
                 game.turn.choosesuit=false;
             }
             //Als de speler nog pakken moest, maar daarmee treuzelde, pak ze automatisch
-            if (game.turn.pakken>0) {
-                for (var i=0; i<game.turn.pakken; i++) {
+            if (game.turn.pakken-game.turn.gepakt>0) {
+                var pakken = game.turn.pakken-game.turn.gepakt;
+                for (var i=0; i<pakken; i++) {
                     pullCard(game.turn);
+                    game.turn.gepakt++;
                 }
             }
             clearInterval(game.interval);
@@ -376,7 +390,7 @@ function update(g) {
         var player = g.players[i];
         if (g.cards.length>0) {
             var playerlist = getPlayerList(player);
-            var info = {'playercards':player.cards, 'topstash': g.stash[g.stash.length-1], 'playersinfo': playerlist, 'suit': g.suit, 'timer': g.timer, 'pakken': player.pakken };
+            var info = {'playercards':player.cards, 'topstash': g.stash[g.stash.length-1], 'playersinfo': playerlist, 'suit': g.suit, 'timer': g.timer, 'pakken': player.pakken-player.gepakt };
             if (player.choosesuit===true) {
                 info.choosesuit=true;
             }
