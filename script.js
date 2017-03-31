@@ -69,8 +69,7 @@ $(document).ready(function () {
         }
 
         socket.on('playHorse', function () {
-            var audio = new Audio('horse.mp3');
-            audio.play();
+            new Audio('horse.mp3').play();
         });
 
         socket.on('entername', function () {
@@ -128,7 +127,12 @@ window.mobileAndTabletcheck = function() {
 
 function displayCards(game) {
     var playercards = game.playercards;
-    $("#startgamebutton").hide();
+    if (game.timer===null) {
+        $("#startgamebutton").show();
+    }
+    else {
+        $("#startgamebutton").hide();
+    }
     var s='';
     if (game.topstash.card === "Joker"){
         s = '♥|♦|♠|♣';

@@ -30,6 +30,9 @@ app.get('/FichtlsLied.mp3', function(req,res){res.sendFile(path.join(__dirname+'
 app.get('/biem.mp3', function(req,res){res.sendFile(path.join(__dirname+'/biem.mp3'));});
 app.get('/horse.mp3', function(req,res){res.sendFile(path.join(__dirname+'/horse.mp3'));});
 
+//controleer elke 5 seconden of een speler nog verbonden is.
+checkPlayers(game);
+
 io.on('connection', function (socket) {
     socket.on('player', function (data) {
         var pattern = /[^\w+]/g;
@@ -268,38 +271,40 @@ function legop(player,card) {
         //Gewonnen
         stopGame();
     }
-    switch (card.card) {
-        case 'A':
-            //Als de opgelegde kaart een aas was, draai de beurtvolgorde om.
-            game.clockwise = !game.clockwise;
-            changeTurn(1);
-            break;
-        case '2':
-            game.turn.pakken=0;
-            //pestkaart, 2 pakken voor de volgende
-            changeTurn(1);
-            game.turn.pakken = pakken + 2;
-            break;
-        case '7':
-            break;
-        case '8':
-            changeTurn(2);
-            break;
-        case 'J':
-            player.choosesuit=true;
-            break;
-        case 'Joker':
-            game.turn.pakken=0;
-            //pestkaart, 5 pakken voor de volgende
-            changeTurn(1);
-            game.turn.pakken = pakken + 5;
-            break;
-        default:
-            changeTurn(1);
+    else {
+        switch (card.card) {
+            case 'A':
+                //Als de opgelegde kaart een aas was, draai de beurtvolgorde om.
+                game.clockwise = !game.clockwise;
+                changeTurn(1);
+                break;
+            case '2':
+                game.turn.pakken = 0;
+                //pestkaart, 2 pakken voor de volgende
+                changeTurn(1);
+                game.turn.pakken = pakken + 2;
+                break;
+            case '7':
+                break;
+            case '8':
+                changeTurn(2);
+                break;
+            case 'J':
+                player.choosesuit = true;
+                break;
+            case 'Joker':
+                game.turn.pakken = 0;
+                //pestkaart, 5 pakken voor de volgende
+                changeTurn(1);
+                game.turn.pakken = pakken + 5;
+                break;
+            default:
+                changeTurn(1);
+        }
+        player.socket.emit('magopleggen', card.card + card.type);
+        game.suit = card.type;
+        update(game);
     }
-    player.socket.emit('magopleggen',card.card+card.type);
-    game.suit=card.type;
-    update(game);
 }
 
 function stopGame() {
@@ -388,54 +393,44 @@ function getPlayer(socketid) {
     return null;
 }
 
-function update(g) {
-    for (var i=0; i<g.players.length; i++) {
-        var player = g.players[i];
-        if (player.disconnecton!==null) {
-            //Als spel gestart is
-            if (game.cards.length > 0) {
-                //Gooi speler uit gameobject na 20 seconden disconnect
-                if (Date.now() - player.disconnecton > 20000) {
-                    for (var c=0; c<player.cards.length; c++) {
-                        //voeg alle kaarten van speler toe aan trekstapel
-                        game.deck.push(player.cards[c]);
+function checkPlayers(g) {
+    //functie controleert of spelers nog wel verbonden zijn
+    setInterval(function () {
+        for (var i=0; i<g.players.length; i++) {
+            var player = g.players[i];
+            if (player.disconnecton!==null) {
+                //Als spel gestart is
+                if (game.cards.length > 0) {
+                    //Gooi speler uit gameobject na 20 seconden disconnect
+                    if (Date.now() - player.disconnecton > 20000) {
+                        for (var c=0; c<player.cards.length; c++) {
+                            //voeg alle kaarten van speler toe aan trekstapel
+                            game.deck.push(player.cards[c]);
+                        }
+                        //Verwijder speler
+                        game.players.splice(game.players.indexOf(player));
+                        update(g);
                     }
-                    //Verwijder speler
-                    game.players.splice(game.players.indexOf(player));
                 }
-            }
-            else {
-                //5sec als spel niet gestart is
-                if (Date.now() - player.disconnecton > 5000) {
-                    game.players.splice(game.players.indexOf(player));
-                    //Geen spelers is spel stoppen
+                else {
+                    //5sec als spel niet gestart is
+                    if (Date.now() - player.disconnecton > 5000) {
+                        game.players.splice(game.players.indexOf(player));
+                        update(g);
+                    }
                 }
             }
         }
-    }
+    },5000);
+}
 
+function update(g) {
     //Geen spelers is spel stoppen
     if (game.players.length === 0) {
         game.cards = [];
     }
 
     //Stuur spelinfo naar alle spelers
-    /*
-    for (var i=0; i<g.players.length; i++) {
-        var player = g.players[i];
-        if (g.cards.length>0) {
-            var playerlist = getPlayerList(player);
-            var info = {'playercards':player.cards, 'topstash': g.stash[g.stash.length-1], 'playersinfo': playerlist, 'suit': g.suit, 'timer': g.timer, 'pakken': player.pakken-player.gepakt };
-            if (player.choosesuit===true) {
-                info.choosesuit=true;
-            }
-            player.socket.emit('update', info);
-        }
-        else {
-            player.socket.emit('playerConnect',{'topstash': null, 'playersinfo': getPlayerList(player)});
-        }
-    }
-    */
     for (var i=0; i<g.players.length; i++) {
         var player = g.players[i];
         var playerlist = getPlayerList(player);
@@ -461,21 +456,24 @@ function getPlayerList(player) {
 
 function distributeCards () {
     var cardsPos = 0;
-    var handSize = 7;
+    var handSize = 1;
 
     // kaarten verdelen onder spelers
     for (var i = 0; i < game.players.length; i++) {
+        game.players[i].cards=[];
         for (var c = cardsPos; c < (i+1)*handSize; c++) {
             game.players[i]['cards'].push(game.cards[c]);
         }
         cardsPos += handSize;
     }
 
+    game.deck=[];
     //overige kaarten naar afpakstapel
     for (var i = cardsPos; i < game.cards.length-1; i++) {
         game.deck[game.deck.length] = game.cards[i];
     }
 
+    game.stash=[];
     //laatste kaart naar de opgooistapel
     game.stash[0] = game.cards[game.cards.length-1];
     game.suit=game.cards[game.cards.length-1].type;
