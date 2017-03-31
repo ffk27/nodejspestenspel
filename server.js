@@ -431,7 +431,7 @@ function removePlayer(player) {
     if (game.turn===player) {
         changeTurn(1);
     }
-    game.players.splice(game.players.indexOf(player));
+    game.players.splice(game.players.indexOf(player),1);
     //Geen spelers is spel stoppen
     if (game.players.length === 0) {
         game.cards = [];
