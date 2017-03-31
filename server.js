@@ -227,6 +227,9 @@ function kanOpleggen(player, card) {
         }
     }
     else if (player.pakken>0 && player.gepakt===0) {
+        if (player.pulledcard!==null) {
+            player.pulledcard=null;
+        }
         //Als de vorige speler een joker of 2 opgelegd heeft, mag de speler er meteen een joker of 2 achteraan gooien.
         if (card.card === 'Joker' || card.card === '2') {
             return true;
@@ -407,16 +410,13 @@ function checkPlayers(g) {
                             //voeg alle kaarten van speler toe aan trekstapel
                             game.deck.push(player.cards[c]);
                         }
-                        //Verwijder speler
-                        game.players.splice(game.players.indexOf(player));
-                        update(g);
+                        removePlayer(player);
                     }
                 }
                 else {
                     //5sec als spel niet gestart is
                     if (Date.now() - player.disconnecton > 5000) {
-                        game.players.splice(game.players.indexOf(player));
-                        update(g);
+                        removePlayer(player);
                     }
                 }
             }
@@ -424,12 +424,20 @@ function checkPlayers(g) {
     },5000);
 }
 
-function update(g) {
+function removePlayer(player) {
+    if (game.turn===player) {
+        changeTurn(1);
+    }
+    game.players.splice(game.players.indexOf(player));
     //Geen spelers is spel stoppen
     if (game.players.length === 0) {
         game.cards = [];
+        stopGame();
     }
+    update(game);
+}
 
+function update(g) {
     //Stuur spelinfo naar alle spelers
     for (var i=0; i<g.players.length; i++) {
         var player = g.players[i];
@@ -456,7 +464,7 @@ function getPlayerList(player) {
 
 function distributeCards () {
     var cardsPos = 0;
-    var handSize = 1;
+    var handSize = 2;
 
     // kaarten verdelen onder spelers
     for (var i = 0; i < game.players.length; i++) {
