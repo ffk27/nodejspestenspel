@@ -254,6 +254,10 @@ function legop(player,card) {
     }
     //Verwijder kaart van spelerskaarten
     player.cards.splice(player.cards.indexOf(card),1);
+    if (player.cards.length===0) {
+        //Gewonnen
+        stopGame();
+    }
     switch (card.card) {
         case 'A':
             //Als de opgelegde kaart een aas was, draai de beurtvolgorde om.
@@ -285,6 +289,12 @@ function legop(player,card) {
     }
     player.socket.emit('magopleggen',card.card+card.type);
     game.suit=card.type;
+    update(game);
+}
+
+function stopGame() {
+    clearInterval(game.interval);
+    game.cards=[];
     update(game);
 }
 
